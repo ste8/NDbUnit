@@ -120,9 +120,10 @@ namespace NDbUnit.Test.OracleClient
             }
         }
 
-        protected override IDbCommandBuilder GetDbCommandBuilder()
+        protected override IDisposableDbCommandBuilder GetDbCommandBuilder()
         {
-            return new OracleClientDbCommandBuilder(new DbConnectionManager<OracleConnection>(DbConnection.OracleClientConnectionString));
+            var connectionManager = new DbConnectionManager<OracleConnection>(DbConnection.OracleClientConnectionString);
+            return new DisposableDbCommandBuilder<OracleConnection>(connectionManager, new OracleClientDbCommandBuilder(connectionManager));
         }
 
         protected override string GetXmlSchemaFilename()

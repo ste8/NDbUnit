@@ -111,17 +111,16 @@ namespace NDbUnit.Core
 
             Hashtable ht = new Hashtable();
 
-            Commands commands;
             foreach (DataTable dataTable in _dataSet.Tables)
             {
                 // Virtual overrides.
-                commands = new Commands();
-                commands.SelectCommand = CreateSelectCommand(_dataSet, dataTable.TableName);
-                commands.InsertCommand = CreateInsertCommand(commands.SelectCommand, dataTable.TableName);
-                commands.InsertIdentityCommand = CreateInsertIdentityCommand(commands.SelectCommand, dataTable.TableName);
-                commands.DeleteCommand = CreateDeleteCommand(commands.SelectCommand, dataTable.TableName);
-                commands.DeleteAllCommand = CreateDeleteAllCommand(dataTable.TableName);
-                commands.UpdateCommand = CreateUpdateCommand(commands.SelectCommand, dataTable.TableName);
+                var commands = new Commands();
+                commands.CreateSelectCommand = () => CreateSelectCommand(_dataSet, dataTable.TableName);
+                commands.CreateInsertCommand = () => CreateInsertCommand(commands.CreateSelectCommand(), dataTable.TableName);
+                commands.CreateInsertIdentityCommand = () => CreateInsertIdentityCommand(commands.CreateSelectCommand(), dataTable.TableName);
+                commands.CreateDeleteCommand = () => CreateDeleteCommand(commands.CreateSelectCommand(), dataTable.TableName);
+                commands.CreateDeleteAllCommand = () => CreateDeleteAllCommand(dataTable.TableName);
+                commands.CreateUpdateCommand = () => CreateUpdateCommand(commands.CreateSelectCommand(), dataTable.TableName);
 
                 ht[dataTable.TableName] = commands;
             }
@@ -133,25 +132,25 @@ namespace NDbUnit.Core
         public IDbCommand GetDeleteAllCommand(string tableName)
         {
             isInitialized();
-            return ((Commands)_dbCommandColl[tableName]).DeleteAllCommand;
+            return ((Commands)_dbCommandColl[tableName]).CreateDeleteAllCommand();
         }
 
         public IDbCommand GetDeleteCommand(string tableName)
         {
             isInitialized();
-            return ((Commands)_dbCommandColl[tableName]).DeleteCommand;
+            return ((Commands)_dbCommandColl[tableName]).CreateDeleteCommand();
         }
 
         public IDbCommand GetInsertCommand(string tableName)
         {
             isInitialized();
-            return ((Commands)_dbCommandColl[tableName]).InsertCommand;
+            return ((Commands)_dbCommandColl[tableName]).CreateInsertCommand();
         }
 
         public IDbCommand GetInsertIdentityCommand(string tableName)
         {
             isInitialized();
-            return ((Commands)_dbCommandColl[tableName]).InsertIdentityCommand;
+            return ((Commands)_dbCommandColl[tableName]).CreateInsertIdentityCommand();
         }
 
         public DataSet GetSchema()
@@ -163,13 +162,13 @@ namespace NDbUnit.Core
         public IDbCommand GetSelectCommand(string tableName)
         {
             isInitialized();
-            return ((Commands)_dbCommandColl[tableName]).SelectCommand;
+            return ((Commands)_dbCommandColl[tableName]).CreateSelectCommand();
         }
 
         public IDbCommand GetUpdateCommand(string tableName)
         {
             isInitialized();
-            return ((Commands)_dbCommandColl[tableName]).UpdateCommand;
+            return ((Commands)_dbCommandColl[tableName]).CreateUpdateCommand();
         }
 
         protected virtual bool ColumnOKToInclude(DataRow dataRow)
@@ -462,9 +461,10 @@ namespace NDbUnit.Core
 
             var connection = ConnectionManager.GetConnection();
 
+            var connectionWasClosed = ConnectionState.Closed == connection.State;
             try
             {
-                if (ConnectionState.Closed == connection.State)
+                if (connectionWasClosed)
                 {
                     connection.Open();
                 }
@@ -483,7 +483,7 @@ namespace NDbUnit.Core
                 //Only close connection if connection was not passed to constructor
                 if (!ConnectionManager.HasExternallyManagedConnection)
                 {
-                    if (connection.State != ConnectionState.Closed)
+                    if (connection.State != ConnectionState.Closed && connectionWasClosed)
                     {
                         connection.Close();
                     }
@@ -505,12 +505,12 @@ namespace NDbUnit.Core
 
         private class Commands
         {
-            public IDbCommand SelectCommand;
-            public IDbCommand InsertCommand;
-            public IDbCommand InsertIdentityCommand;
-            public IDbCommand DeleteCommand;
-            public IDbCommand DeleteAllCommand;
-            public IDbCommand UpdateCommand;
+            public Func<IDbCommand> CreateSelectCommand;
+            public Func<IDbCommand> CreateInsertCommand;
+            public Func<IDbCommand> CreateInsertIdentityCommand;
+            public Func<IDbCommand> CreateDeleteCommand;
+            public Func<IDbCommand> CreateDeleteAllCommand;
+            public Func<IDbCommand> CreateUpdateCommand;
         }
 
     }

@@ -32,94 +32,87 @@ namespace NDbUnit.Test
         [Test]
         public void Delete_Operation_Matches_Expected_Data()
         {
-            INDbUnitTest database = GetNDbUnitTest();
+            using (INDbUnitTest database = GetNDbUnitTest())
+            {
+                DataSet expectedDataSet = BuildDataSet();
 
-            DataSet expectedDataSet = BuildDataSet();
+                database.ReadXmlSchema(ReadOnlyStreamFromFilename(GetXmlSchemaFilename()));
+                database.ReadXml(ReadOnlyStreamFromFilename(GetXmlFilename()));
 
-            database.ReadXmlSchema(ReadOnlyStreamFromFilename(GetXmlSchemaFilename()));
-            database.ReadXml(ReadOnlyStreamFromFilename(GetXmlFilename()));
+                database.PerformDbOperation(DbOperationFlag.DeleteAll);
+                database.PerformDbOperation(DbOperationFlag.InsertIdentity);
+                database.PerformDbOperation(DbOperationFlag.DeleteAll);
 
-            database.PerformDbOperation(DbOperationFlag.DeleteAll);
-            database.PerformDbOperation(DbOperationFlag.InsertIdentity);
-            database.PerformDbOperation(DbOperationFlag.DeleteAll);
+                DataSet actualDataSet = database.GetDataSetFromDb();
 
-            DataSet actualDataSet = database.GetDataSetFromDb();
-
-            Assert.That(actualDataSet.HasTheSameDataAs(expectedDataSet));
-
-            database.Dispose();
+                Assert.That(actualDataSet.HasTheSameDataAs(expectedDataSet));
+            }
         }
 
         //[NUnit.Framework.Ignore]
         [Test]
         public void InsertIdentity_Operation_Matches_Expected_Data()
         {
-            INDbUnitTest database = GetNDbUnitTest();
+            using (INDbUnitTest database = GetNDbUnitTest())
+            {
+                DataSet expectedDataSet = BuildDataSet(GetXmlFilename());
 
-            DataSet expectedDataSet = BuildDataSet(GetXmlFilename());
+                database.ReadXmlSchema(ReadOnlyStreamFromFilename(GetXmlSchemaFilename()));
+                database.ReadXml(ReadOnlyStreamFromFilename(GetXmlFilename()));
 
-            database.ReadXmlSchema(ReadOnlyStreamFromFilename(GetXmlSchemaFilename()));
-            database.ReadXml(ReadOnlyStreamFromFilename(GetXmlFilename()));
+                database.PerformDbOperation(DbOperationFlag.DeleteAll);
+                database.PerformDbOperation(DbOperationFlag.InsertIdentity);
 
-            database.PerformDbOperation(DbOperationFlag.DeleteAll);
-            database.PerformDbOperation(DbOperationFlag.InsertIdentity);
+                DataSet actualDataSet = database.GetDataSetFromDb();
 
-            DataSet actualDataSet = database.GetDataSetFromDb();
-
-            Assert.That(actualDataSet.HasTheSameDataAs(expectedDataSet));
-            
-            database.Dispose();
-
+                Assert.That(actualDataSet.HasTheSameDataAs(expectedDataSet));
+            }
         }
 
         //[NUnit.Framework.Ignore]
         [Test]
         public void Refresh_Operation_Matches_Expected_Data()
         {
-            INDbUnitTest database = GetNDbUnitTest();
+            using (INDbUnitTest database = GetNDbUnitTest())
+            {
+                DataSet expectedDataSet = BuildDataSet(GetXmlFilename());
 
-            DataSet expectedDataSet = BuildDataSet(GetXmlFilename());
+                database.ReadXmlSchema(ReadOnlyStreamFromFilename(GetXmlSchemaFilename()));
+                database.ReadXml(ReadOnlyStreamFromFilename(GetXmlFilename()));
 
-            database.ReadXmlSchema(ReadOnlyStreamFromFilename(GetXmlSchemaFilename()));
-            database.ReadXml(ReadOnlyStreamFromFilename(GetXmlFilename()));
+                database.PerformDbOperation(DbOperationFlag.DeleteAll);
+                database.PerformDbOperation(DbOperationFlag.InsertIdentity);
 
-            database.PerformDbOperation(DbOperationFlag.DeleteAll);
-            database.PerformDbOperation(DbOperationFlag.InsertIdentity);
+                database.ReadXml(GetXmlRefreshFilename());
+                database.PerformDbOperation(DbOperationFlag.Refresh);
 
-            database.ReadXml(GetXmlRefreshFilename());
-            database.PerformDbOperation(DbOperationFlag.Refresh);
+                DataSet actualDataSet = database.GetDataSetFromDb();
 
-            DataSet actualDataSet = database.GetDataSetFromDb();
-
-            Assert.That(actualDataSet.HasTheSameDataAs(expectedDataSet));
-            
-            database.Dispose();
-
+                Assert.That(actualDataSet.HasTheSameDataAs(expectedDataSet));
+            }
         }
 
         //[NUnit.Framework.Ignore]
         [Test]
         public void Update_Operation_Matches_Expected_Data()
         {
-            INDbUnitTest database = GetNDbUnitTest();
+            using (INDbUnitTest database = GetNDbUnitTest())
+            {
+                DataSet expectedDataSet = BuildDataSet(GetXmlModFilename());
 
-            DataSet expectedDataSet = BuildDataSet(GetXmlModFilename());
+                database.ReadXmlSchema(ReadOnlyStreamFromFilename(GetXmlSchemaFilename()));
+                database.ReadXml(ReadOnlyStreamFromFilename(GetXmlFilename()));
 
-            database.ReadXmlSchema(ReadOnlyStreamFromFilename(GetXmlSchemaFilename()));
-            database.ReadXml(ReadOnlyStreamFromFilename(GetXmlFilename()));
+                database.PerformDbOperation(DbOperationFlag.DeleteAll);
+                database.PerformDbOperation(DbOperationFlag.InsertIdentity);
 
-            database.PerformDbOperation(DbOperationFlag.DeleteAll);
-            database.PerformDbOperation(DbOperationFlag.InsertIdentity);
+                database.ReadXml(GetXmlModFilename());
+                database.PerformDbOperation(DbOperationFlag.Update);
 
-            database.ReadXml(GetXmlModFilename());
-            database.PerformDbOperation(DbOperationFlag.Update);
+                DataSet actualDataSet = database.GetDataSetFromDb();
 
-            DataSet actualDataSet = database.GetDataSetFromDb();
-
-            Assert.That(actualDataSet.HasTheSameDataAs(expectedDataSet));
-            
-            database.Dispose();
-
+                Assert.That(actualDataSet.HasTheSameDataAs(expectedDataSet));
+            }
         }
 
         protected abstract INDbUnitTest GetNDbUnitTest();

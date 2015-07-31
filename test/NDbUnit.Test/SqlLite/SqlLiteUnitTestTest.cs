@@ -38,7 +38,7 @@ namespace NDbUnit.Test.SqlLite
             {
                 return new List<string>()
                 {
-                    "Role", "User", "UserRole" 
+                    "UserRole", "Role", "User"
                 };
             }
         }

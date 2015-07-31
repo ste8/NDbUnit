@@ -120,9 +120,10 @@ namespace NDbUnit.Test.SqlClient
             }
         }
 
-        protected override IDbCommandBuilder GetDbCommandBuilder()
+        protected override IDisposableDbCommandBuilder GetDbCommandBuilder()
         {
-            return new OleDbCommandBuilder(new DbConnectionManager<OleDbConnection>(DbConnection.OleDbConnectionString));
+            var connectionManager = new DbConnectionManager<OleDbConnection>(DbConnection.OleDbConnectionString);
+            return new DisposableDbCommandBuilder<OleDbConnection>(connectionManager, new OleDbCommandBuilder(connectionManager));
         }
 
         protected override string GetXmlSchemaFilename()

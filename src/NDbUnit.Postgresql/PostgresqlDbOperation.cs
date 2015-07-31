@@ -72,11 +72,20 @@ namespace NDbUnit.Postgresql
             try
             {
                 IDbDataAdapter sqlDataAdapter = CreateDbDataAdapter();
-                sqlDataAdapter.InsertCommand = dbCommand;
-                sqlDataAdapter.InsertCommand.Connection = sqlTransaction.Connection;
-                sqlDataAdapter.InsertCommand.Transaction = sqlTransaction;
+                try
+                {
+                    sqlDataAdapter.InsertCommand = dbCommand;
+                    sqlDataAdapter.InsertCommand.Connection = sqlTransaction.Connection;
+                    sqlDataAdapter.InsertCommand.Transaction = sqlTransaction;
 
-                ((DbDataAdapter)sqlDataAdapter).Update(dataTable);
+                    ((DbDataAdapter)sqlDataAdapter).Update(dataTable);
+                }
+                finally
+                {
+                    var disposable = sqlDataAdapter as IDisposable;
+                    if (disposable != null)
+                        disposable.Dispose();
+                }
             }
 
             finally

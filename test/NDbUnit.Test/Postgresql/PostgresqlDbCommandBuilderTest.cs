@@ -120,9 +120,10 @@ namespace NDbUnit.Test.Postgresql
             }
         }
 
-        protected override IDbCommandBuilder GetDbCommandBuilder()
+        protected override IDisposableDbCommandBuilder GetDbCommandBuilder()
         {
-            return new PostgresqlDbCommandBuilder(new DbConnectionManager<NpgsqlConnection>(DbConnection.PostgresqlConnectionString));
+            var connectionManager = new DbConnectionManager<NpgsqlConnection>(DbConnection.PostgresqlConnectionString);
+            return new DisposableDbCommandBuilder<NpgsqlConnection>(connectionManager, new PostgresqlDbCommandBuilder(connectionManager));
         }
 
         protected override string GetXmlSchemaFilename()

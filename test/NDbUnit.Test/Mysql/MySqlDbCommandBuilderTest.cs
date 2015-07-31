@@ -120,9 +120,10 @@ namespace NDbUnit.Test.SqlClient
             }
         }
 
-        protected override IDbCommandBuilder GetDbCommandBuilder()
+        protected override IDisposableDbCommandBuilder GetDbCommandBuilder()
         {
-            return new MySqlDbCommandBuilder(new DbConnectionManager<MySqlConnection>(DbConnection.MySqlConnectionString));
+            var connectionManager = new DbConnectionManager<MySqlConnection>(DbConnection.MySqlConnectionString);
+            return new DisposableDbCommandBuilder<MySqlConnection>(connectionManager, new MySqlDbCommandBuilder(connectionManager));
         }
 
         protected override string GetXmlSchemaFilename()

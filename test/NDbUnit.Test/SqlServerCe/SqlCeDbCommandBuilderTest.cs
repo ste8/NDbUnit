@@ -120,9 +120,10 @@ namespace NDbUnit.Test.SqlServerCe
             }
         }
 
-        protected override IDbCommandBuilder GetDbCommandBuilder()
+        protected override IDisposableDbCommandBuilder GetDbCommandBuilder()
         {
-            return new SqlCeDbCommandBuilder(new DbConnectionManager<SqlCeConnection>(DbConnection.SqlCeConnectionString));
+            var connectionManager = new DbConnectionManager<SqlCeConnection>(DbConnection.SqlCeConnectionString);
+            return new DisposableDbCommandBuilder<SqlCeConnection>(connectionManager, new SqlCeDbCommandBuilder(connectionManager));
         }
 
         protected override string GetXmlSchemaFilename()

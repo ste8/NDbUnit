@@ -403,7 +403,16 @@ namespace NDbUnit.Core
             IDbCommand selectCommand = GetDbCommandBuilder().GetSelectCommand(tableName);
             selectCommand.Connection = dbConnection;
             IDbDataAdapter adapter = CreateDataAdapter(selectCommand);
-            ((DbDataAdapter)adapter).Fill(dsToFill, tableName);
+            try
+            {
+                ((DbDataAdapter)adapter).Fill(dsToFill, tableName);
+            }
+            finally
+            {
+                var disposable = adapter as IDisposable;
+                if (disposable != null)
+                    disposable.Dispose();
+            }
         }
 
         private void checkInitialized()

@@ -30,7 +30,7 @@ namespace NDbUnit.Test.Common
     {
         private const int EXPECTED_COUNT_OF_COMMANDS = 3;
 
-        protected IDbCommandBuilder _commandBuilder;
+        protected IDisposableDbCommandBuilder _commandBuilder;
 
         public abstract IList<string> ExpectedDataSetTableNames { get; }
 
@@ -55,6 +55,12 @@ namespace NDbUnit.Test.Common
 
         }
 
+        [TearDown]
+        public void TearDown()
+        {
+            _commandBuilder.Dispose();
+        }
+
         [Test]
         public void GetDeleteAllCommand_Creates_Correct_SQL_Commands()
         {
@@ -63,11 +69,13 @@ namespace NDbUnit.Test.Common
             DataSet ds = _commandBuilder.GetSchema();
             foreach (DataTable dataTable in ds.Tables)
             {
-                IDbCommand dbCommand = _commandBuilder.GetDeleteAllCommand(dataTable.TableName);
-                commandList.Add(dbCommand.CommandText);
+                using (IDbCommand dbCommand = _commandBuilder.GetDeleteAllCommand(dataTable.TableName))
+                {
+                    commandList.Add(dbCommand.CommandText);
 
-                Console.WriteLine("Table '" + dataTable.TableName + "' delete all command");
-                Console.WriteLine("\t" + dbCommand.CommandText);
+                    Console.WriteLine("Table '" + dataTable.TableName + "' delete all command");
+                    Console.WriteLine("\t" + dbCommand.CommandText);
+                }
             }
 
             Assert.AreEqual(EXPECTED_COUNT_OF_COMMANDS, commandList.Count, string.Format("Should be {0} commands", EXPECTED_COUNT_OF_COMMANDS));
@@ -82,11 +90,13 @@ namespace NDbUnit.Test.Common
             DataSet ds = _commandBuilder.GetSchema();
             foreach (DataTable dataTable in ds.Tables)
             {
-                IDbCommand dbCommand = _commandBuilder.GetDeleteCommand(dataTable.TableName);
-                commandList.Add(dbCommand.CommandText);
+                using (IDbCommand dbCommand = _commandBuilder.GetDeleteCommand(dataTable.TableName))
+                {
+                    commandList.Add(dbCommand.CommandText);
 
-                Console.WriteLine("Table '" + dataTable.TableName + "' delete command");
-                Console.WriteLine("\t" + dbCommand.CommandText);
+                    Console.WriteLine("Table '" + dataTable.TableName + "' delete command");
+                    Console.WriteLine("\t" + dbCommand.CommandText);
+                }
             }
 
             Assert.AreEqual(EXPECTED_COUNT_OF_COMMANDS, commandList.Count, string.Format("Should be {0} commands", EXPECTED_COUNT_OF_COMMANDS));
@@ -101,11 +111,13 @@ namespace NDbUnit.Test.Common
 
             foreach (DataTable dataTable in ds.Tables)
             {
-                IDbCommand dbCommand = _commandBuilder.GetInsertCommand(dataTable.TableName);
-                commandList.Add(dbCommand.CommandText);
+                using (IDbCommand dbCommand = _commandBuilder.GetInsertCommand(dataTable.TableName))
+                {
+                    commandList.Add(dbCommand.CommandText);
 
-                Console.WriteLine("Table '" + dataTable.TableName + "' insert command");
-                Console.WriteLine("\t" + dbCommand.CommandText);
+                    Console.WriteLine("Table '" + dataTable.TableName + "' insert command");
+                    Console.WriteLine("\t" + dbCommand.CommandText);
+                }
             }
 
             Assert.AreEqual(EXPECTED_COUNT_OF_COMMANDS, commandList.Count, string.Format("Should be {0} commands", EXPECTED_COUNT_OF_COMMANDS));
@@ -120,11 +132,13 @@ namespace NDbUnit.Test.Common
 
             foreach (DataTable dataTable in ds.Tables)
             {
-                IDbCommand dbCommand = _commandBuilder.GetInsertIdentityCommand(dataTable.TableName);
-                commandList.Add(dbCommand.CommandText);
+                using (IDbCommand dbCommand = _commandBuilder.GetInsertIdentityCommand(dataTable.TableName))
+                {
+                    commandList.Add(dbCommand.CommandText);
 
-                Console.WriteLine("Table '" + dataTable.TableName + "' insert identity command");
-                Console.WriteLine("\t" + dbCommand.CommandText);
+                    Console.WriteLine("Table '" + dataTable.TableName + "' insert identity command");
+                    Console.WriteLine("\t" + dbCommand.CommandText);
+                }
             }
 
             Assert.AreEqual(EXPECTED_COUNT_OF_COMMANDS, commandList.Count, string.Format("Should be {0} commands", EXPECTED_COUNT_OF_COMMANDS));
@@ -134,35 +148,39 @@ namespace NDbUnit.Test.Common
         [Test]
         public void GetSchema_Contains_Proper_Tables()
         {
-            IDbCommandBuilder builder = GetDbCommandBuilder();
-            builder.BuildCommands(GetXmlSchemaFilename());
-            DataSet schema = builder.GetSchema();
-
-            IList<string> schemaTables = new List<string>();
-
-            foreach (DataTable dataTable in schema.Tables)
+            using (IDisposableDbCommandBuilder builder = GetDbCommandBuilder())
             {
-                schemaTables.Add(dataTable.TableName);
+                builder.BuildCommands(GetXmlSchemaFilename());
+                DataSet schema = builder.GetSchema();
 
-                Console.WriteLine("Table '" + dataTable.TableName + "' found in dataset");
+                IList<string> schemaTables = new List<string>();
+
+                foreach (DataTable dataTable in schema.Tables)
+                {
+                    schemaTables.Add(dataTable.TableName);
+
+                    Console.WriteLine("Table '" + dataTable.TableName + "' found in dataset");
+                }
+
+                Assert.AreEqual(EXPECTED_COUNT_OF_COMMANDS, schema.Tables.Count, string.Format("Should be {0} Tables in dataset", EXPECTED_COUNT_OF_COMMANDS));
+                Assert.That(ExpectedDataSetTableNames, Is.EquivalentTo(schemaTables));
             }
-
-            Assert.AreEqual(EXPECTED_COUNT_OF_COMMANDS, schema.Tables.Count, string.Format("Should be {0} Tables in dataset", EXPECTED_COUNT_OF_COMMANDS));
-            Assert.That(ExpectedDataSetTableNames, Is.EquivalentTo(schemaTables));
         }
 
         [Test]
         public void GetSchema_Throws_NDbUnit_Exception_When_Not_Initialized()
         {
-            IDbCommandBuilder builder = GetDbCommandBuilder();
-            try
+            using (IDisposableDbCommandBuilder builder = GetDbCommandBuilder())
             {
-                builder.GetSchema();
-                Assert.Fail("Expected Exception of type NDbUnitException not thrown!");
-            }
-            catch (NDbUnitException ex)
-            {
-                Assert.IsNotNull(ex);
+                try
+                {
+                    builder.GetSchema();
+                    Assert.Fail("Expected Exception of type NDbUnitException not thrown!");
+                }
+                catch (NDbUnitException ex)
+                {
+                    Assert.IsNotNull(ex);
+                }
             }
         }
 
@@ -173,11 +191,13 @@ namespace NDbUnit.Test.Common
             DataSet ds = _commandBuilder.GetSchema();
             foreach (DataTable dataTable in ds.Tables)
             {
-                IDbCommand dbCommand = _commandBuilder.GetSelectCommand(dataTable.TableName);
-                commandList.Add(dbCommand.CommandText);
+                using (IDbCommand dbCommand = _commandBuilder.GetSelectCommand(dataTable.TableName))
+                {
+                    commandList.Add(dbCommand.CommandText);
 
-                Console.WriteLine("Table '" + dataTable.TableName + "' select command");
-                Console.WriteLine("\t" + dbCommand.CommandText);
+                    Console.WriteLine("Table '" + dataTable.TableName + "' select command");
+                    Console.WriteLine("\t" + dbCommand.CommandText);
+                }
             }
 
             Assert.AreEqual(EXPECTED_COUNT_OF_COMMANDS, commandList.Count, string.Format("Should be {0} commands", EXPECTED_COUNT_OF_COMMANDS));
@@ -192,18 +212,20 @@ namespace NDbUnit.Test.Common
             DataSet ds = _commandBuilder.GetSchema();
             foreach (DataTable dataTable in ds.Tables)
             {
-                IDbCommand dbCommand = _commandBuilder.GetUpdateCommand(dataTable.TableName);
-                commandList.Add(dbCommand.CommandText);
+                using (IDbCommand dbCommand = _commandBuilder.GetUpdateCommand(dataTable.TableName))
+                {
+                    commandList.Add(dbCommand.CommandText);
 
-                Console.WriteLine("Table '" + dataTable.TableName + "' update command");
-                Console.WriteLine("\t" + dbCommand.CommandText);
+                    Console.WriteLine("Table '" + dataTable.TableName + "' update command");
+                    Console.WriteLine("\t" + dbCommand.CommandText);
+                }
             }
 
             Assert.AreEqual(EXPECTED_COUNT_OF_COMMANDS, commandList.Count, string.Format("Should be {0} commands", EXPECTED_COUNT_OF_COMMANDS));
             Assert.That(ExpectedUpdateCommands, Is.EquivalentTo(commandList));
         }
 
-        protected abstract IDbCommandBuilder GetDbCommandBuilder();
+        protected abstract IDisposableDbCommandBuilder GetDbCommandBuilder();
 
         protected abstract string GetXmlSchemaFilename();
 

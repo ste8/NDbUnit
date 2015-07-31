@@ -31,7 +31,7 @@ namespace NDbUnit.Test.SqlLite
     [TestFixture]
     public class SqlLiteDbOperationTest : NDbUnit.Test.Common.DbOperationTestBase
     {
-        protected override NDbUnit.Core.IDbCommandBuilder GetCommandBuilder()
+        protected override IDbCommandBuilder GetCommandBuilder()
         {
             return new SqlLiteDbCommandBuilder(new DbConnectionManager<SQLiteConnection>(DbConnection.SqlLiteConnectionString));
         }

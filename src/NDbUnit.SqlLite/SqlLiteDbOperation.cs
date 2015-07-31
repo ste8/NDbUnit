@@ -18,6 +18,7 @@
  *
  */
 
+using System;
 using System.Data;
 using System.Data.Common;
 using System.Data.SQLite;
@@ -45,6 +46,58 @@ namespace NDbUnit.Core.SqlLite
         protected override void OnInsertIdentity(DataTable dataTable, IDbCommand dbCommand, IDbTransaction dbTransaction)
         {
             OnInsert(dataTable, dbCommand, dbTransaction);
+        }
+
+        /// <summary>
+        /// Disable the constraints for the whole database
+        /// </summary>
+        /// <param name="dataSet">The <see cref="DataSet"/> containing all the tables where the constraints must be disabled</param>
+        /// <param name="transaction">The transaction used while processing data with disabled constraints</param>
+        protected override void DisableAllTableConstraints(DataSet dataSet, IDbTransaction transaction)
+        {
+            using (var sqlCommand = (SQLiteCommand)CreateDbCommand("PRAGMA ignore_check_constraints = true"))
+            {
+                sqlCommand.Connection = (SQLiteConnection)transaction.Connection;
+                sqlCommand.Transaction = (SQLiteTransaction)transaction;
+                sqlCommand.ExecuteNonQuery();
+            }
+        }
+
+        /// <summary>
+        /// Enable the constraints for the whole database
+        /// </summary>
+        /// <param name="dataSet">The <see cref="DataSet"/> containing all the tables where the constraints must be enabled</param>
+        /// <param name="transaction">The transaction used while processing data with enabled constraints</param>
+        protected override void EnableAllTableConstraints(DataSet dataSet, IDbTransaction transaction)
+        {
+            using (var sqlCommand = (SQLiteCommand)CreateDbCommand("PRAGMA ignore_check_constraints = false"))
+            {
+                sqlCommand.Connection = (SQLiteConnection)transaction.Connection;
+                sqlCommand.Transaction = (SQLiteTransaction)transaction;
+                sqlCommand.ExecuteNonQuery();
+            }
+        }
+
+        /// <summary>
+        /// Disable a single tables constraints
+        /// </summary>
+        /// <param name="dataTable">The table for which the constraints must be disabled</param>
+        /// <param name="dbTransaction">The transaction used while processing data with disabled constraints</param>
+        /// <exception cref="NotSupportedException">This method isn't supported for SQLite</exception>
+        protected override void DisableTableConstraints(DataTable dataTable, IDbTransaction dbTransaction)
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <summary>
+        /// Enable a single tables constraints
+        /// </summary>
+        /// <param name="dataTable">The table for which the constraints must be enabled</param>
+        /// <param name="dbTransaction">The transaction used while processing data with enabled constraints</param>
+        /// <exception cref="NotSupportedException">This method isn't supported for SQLite</exception>
+        protected override void EnableTableConstraints(DataTable dataTable, IDbTransaction dbTransaction)
+        {
+            throw new NotSupportedException();
         }
     }
 }

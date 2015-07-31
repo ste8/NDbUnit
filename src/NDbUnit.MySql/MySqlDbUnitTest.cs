@@ -72,8 +72,10 @@ namespace NDbUnit.Core.MySqlClient
         {
             MySqlCommand selectCommand = (MySqlCommand)GetDbCommandBuilder().GetSelectCommand(tableName);
             selectCommand.Connection = dbConnection as MySqlConnection;
-            MySqlDataAdapter adapter = new MySqlDataAdapter(selectCommand);
-            adapter.Fill(dsToFill, tableName);
+            using (MySqlDataAdapter adapter = new MySqlDataAdapter(selectCommand))
+            {
+                adapter.Fill(dsToFill, tableName);
+            }
         }
 
         public override void ExecuteScripts()

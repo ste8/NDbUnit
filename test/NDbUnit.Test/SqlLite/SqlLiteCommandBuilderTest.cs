@@ -36,7 +36,7 @@ namespace NDbUnit.Test.SqlClient
             {
                 return new List<string>()
                 {
-                    "Role", "User", "UserRole" 
+                    "UserRole", "Role", "User"
                 };
             }
         }
@@ -47,9 +47,9 @@ namespace NDbUnit.Test.SqlClient
             {
                 return new List<string>()
                 {
+                    "DELETE FROM [UserRole]",
                     "DELETE FROM [Role]",
                     "DELETE FROM [User]",
-                    "DELETE FROM [UserRole]"
                 };
             }
         }
@@ -60,9 +60,9 @@ namespace NDbUnit.Test.SqlClient
             {
                 return new List<string>()
                 {
+                    "DELETE FROM [UserRole] WHERE [UserID]=@p1 AND [RoleID]=@p2",
                     "DELETE FROM [Role] WHERE [ID]=@p1",
                     "DELETE FROM [User] WHERE [ID]=@p1",
-                    "DELETE FROM [UserRole] WHERE [UserID]=@p1 AND [RoleID]=@p2"
                 };
             }
         }
@@ -73,9 +73,9 @@ namespace NDbUnit.Test.SqlClient
             {
                 return new List<string>()
                 {
+                    "INSERT INTO [UserRole]([UserID], [RoleID]) VALUES(@p1, @p2)",
                     "INSERT INTO [Role]([Name], [Description]) VALUES(@p1, @p2)",
                     "INSERT INTO [User]([FirstName], [LastName], [Age], [SupervisorID]) VALUES(@p1, @p2, @p3, @p4)",
-                    "INSERT INTO [UserRole]([UserID], [RoleID]) VALUES(@p1, @p2)"
                 };
 
             }
@@ -100,9 +100,9 @@ namespace NDbUnit.Test.SqlClient
             {
                 return new List<string>()
                 {
+                    "SELECT [UserID], [RoleID] FROM [UserRole]",
                     "SELECT [ID], [Name], [Description] FROM [Role]",
                     "SELECT [ID], [FirstName], [LastName], [Age], [SupervisorID] FROM [User]",
-                    "SELECT [UserID], [RoleID] FROM [UserRole]"
                 };
             }
         }
@@ -113,16 +113,17 @@ namespace NDbUnit.Test.SqlClient
             {
                 return new List<string>()
                 {
+                    "UPDATE [UserRole] SET [UserID]=@p2, [RoleID]=@p4 WHERE [UserID]=@p1 AND [RoleID]=@p3",
                     "UPDATE [Role] SET [Name]=@p2, [Description]=@p3 WHERE [ID]=@p1",
                     "UPDATE [User] SET [FirstName]=@p2, [LastName]=@p3, [Age]=@p4, [SupervisorID]=@p5 WHERE [ID]=@p1",
-                    "UPDATE [UserRole] SET [UserID]=@p2, [RoleID]=@p4 WHERE [UserID]=@p1 AND [RoleID]=@p3"
                 };
             }
         }
 
-        protected override IDbCommandBuilder GetDbCommandBuilder()
+        protected override IDisposableDbCommandBuilder GetDbCommandBuilder()
         {
-            return new SqlLiteDbCommandBuilder(new DbConnectionManager<SQLiteConnection>(DbConnection.SqlLiteConnectionString));
+            var connectionManager = new DbConnectionManager<SQLiteConnection>(DbConnection.SqlLiteConnectionString);
+            return new DisposableDbCommandBuilder<SQLiteConnection>(connectionManager, new SqlLiteDbCommandBuilder(connectionManager));
         }
 
         protected override string GetXmlSchemaFilename()
