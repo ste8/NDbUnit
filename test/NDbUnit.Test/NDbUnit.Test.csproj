@@ -175,7 +175,7 @@
     <Compile Include="DbCommandBuilderTestBase.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DbConnection.cs">
+    <Compile Include="DbConnections.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DbOperationTestBase.cs" />
