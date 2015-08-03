@@ -41,6 +41,7 @@ namespace NDbUnit.Core
             get;
         }
 
+        void ReleaseConnection();
         DataSet GetSchema();
         void BuildCommands(string xmlSchemaFile);
         void BuildCommands(Stream xmlSchema);

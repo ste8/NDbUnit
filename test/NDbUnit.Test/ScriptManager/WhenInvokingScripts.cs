@@ -2,6 +2,7 @@ using NUnit.Framework;
 
 namespace NDbUnit.Test.ScriptManager
 {
+    [Category(TestCategories.SqlServerTests)]
     [TestFixture]
     public class WhenInvokingScripts
     {

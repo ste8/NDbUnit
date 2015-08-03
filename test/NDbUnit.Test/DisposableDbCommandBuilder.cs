@@ -38,6 +38,11 @@ namespace NDbUnit.Test
             get { return _commandBuilder.Connection; }
         }
 
+        public void ReleaseConnection()
+        {
+            _connectionManager.ReleaseConnection();
+        }
+
         public DataSet GetSchema()
         {
             return _commandBuilder.GetSchema();

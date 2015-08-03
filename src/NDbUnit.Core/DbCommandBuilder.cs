@@ -116,11 +116,35 @@ namespace NDbUnit.Core
                 // Virtual overrides.
                 var commands = new Commands();
                 commands.CreateSelectCommand = () => CreateSelectCommand(_dataSet, dataTable.TableName);
-                commands.CreateInsertCommand = () => CreateInsertCommand(commands.CreateSelectCommand(), dataTable.TableName);
-                commands.CreateInsertIdentityCommand = () => CreateInsertIdentityCommand(commands.CreateSelectCommand(), dataTable.TableName);
-                commands.CreateDeleteCommand = () => CreateDeleteCommand(commands.CreateSelectCommand(), dataTable.TableName);
+                commands.CreateInsertCommand = () =>
+                {
+                    using (var selectCommand = commands.CreateSelectCommand())
+                    {
+                        return CreateInsertCommand(selectCommand, dataTable.TableName);
+                    }
+                };
+                commands.CreateInsertIdentityCommand = () =>
+                {
+                    using (var selectCommand = commands.CreateSelectCommand())
+                    {
+                        return CreateInsertIdentityCommand(selectCommand, dataTable.TableName);
+                    }
+                };
+                commands.CreateDeleteCommand = () =>
+                {
+                    using (var selectCommand = commands.CreateSelectCommand())
+                    {
+                        return CreateDeleteCommand(selectCommand, dataTable.TableName);
+                    }
+                };
                 commands.CreateDeleteAllCommand = () => CreateDeleteAllCommand(dataTable.TableName);
-                commands.CreateUpdateCommand = () => CreateUpdateCommand(commands.CreateSelectCommand(), dataTable.TableName);
+                commands.CreateUpdateCommand = () =>
+                {
+                    using (var selectCommand = commands.CreateSelectCommand())
+                    {
+                        return CreateUpdateCommand(selectCommand, dataTable.TableName);
+                    }
+                };
 
                 ht[dataTable.TableName] = commands;
             }
@@ -151,6 +175,11 @@ namespace NDbUnit.Core
         {
             isInitialized();
             return ((Commands)_dbCommandColl[tableName]).CreateInsertIdentityCommand();
+        }
+
+        public void ReleaseConnection()
+        {
+            ConnectionManager.ReleaseConnection();
         }
 
         public DataSet GetSchema()

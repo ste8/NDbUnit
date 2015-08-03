@@ -62,7 +62,7 @@ namespace NDbUnit.Test.Common
         [TearDown]
         public void _TearDown()
         {
-            _commandBuilder.Connection.Close();
+            _commandBuilder.ReleaseConnection();
         }
 
         [Test]
@@ -134,7 +134,13 @@ namespace NDbUnit.Test.Common
         {
             ResetIdentityColumns();
 
+            _commandBuilder.ReleaseConnection();
+            _commandBuilder.Connection.Open();
+
             DeleteAll_Executes_Without_Exception();
+
+            _commandBuilder.ReleaseConnection();
+            _commandBuilder.Connection.Open();
 
             using (var sqlTransaction = _commandBuilder.Connection.BeginTransaction())
             {
@@ -268,10 +274,14 @@ namespace NDbUnit.Test.Common
                     {
                         if (column.AutoIncrement)
                         {
-                            IDbCommand sqlCommand = GetResetIdentityColumnsDbCommand(table, column);
-                            sqlCommand.Transaction = (IDbTransaction)sqlTransaction;
-                            if (sqlCommand != null)
-                                sqlCommand.ExecuteNonQuery();
+                            using (IDbCommand sqlCommand = GetResetIdentityColumnsDbCommand(table, column))
+                            {
+                                if (sqlCommand != null)
+                                {
+                                    sqlCommand.Transaction = (IDbTransaction)sqlTransaction;
+                                    sqlCommand.ExecuteNonQuery();
+                                }
+                            }
 
                             break;
                         }
@@ -287,6 +297,11 @@ namespace NDbUnit.Test.Common
                 }
 
                 throw;
+            }
+            finally
+            {
+                if (sqlTransaction != null)
+                    sqlTransaction.Dispose();
             }
         }
 

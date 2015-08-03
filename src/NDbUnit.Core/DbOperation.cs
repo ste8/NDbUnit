@@ -312,7 +312,6 @@ namespace NDbUnit.Core
             {
                 using (var selectCommand = dbCommandBuilder.GetSelectCommand(tableName))
                 {
-                    dbCommandBuilder.GetSelectCommand(tableName);
                     selectCommand.Connection = sqlTransaction.Connection;
                     selectCommand.Transaction = sqlTransaction;
                     sqlDataAdapter.SelectCommand = selectCommand;
