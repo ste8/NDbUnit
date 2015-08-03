@@ -28,7 +28,7 @@ namespace NDbUnit.Core
 {
     public class OperationEventArgs : EventArgs
     {
-        public IDbTransaction DbTransaction { get; set; }
+        public DbTransaction DbTransaction { get; set; }
     }
 
     public delegate void PreOperationEvent(object sender, OperationEventArgs args);
@@ -38,9 +38,9 @@ namespace NDbUnit.Core
     /// <summary>
     /// The base class implementation of all NDbUnit unit test data adapters.
     /// </summary>
-    public abstract class NDbUnitTest<TDbConnection> : INDbUnitTest where TDbConnection : class, IDbConnection, new()
+    public abstract class NDbUnitTest<TDbConnection> : INDbUnitTest where TDbConnection : DbConnection, new()
     {
-        //protected IDbConnection Connection;
+        //protected DbConnection Connection;
 
         //private readonly string _connectionString;
 
@@ -133,7 +133,7 @@ namespace NDbUnit.Core
 
             foreach (string ddlText in ScriptManager.ScriptContents)
             {
-                IDbCommand command = connection.CreateCommand();
+                DbCommand command = connection.CreateCommand();
                 command.CommandText = ddlText;
                 command.ExecuteNonQuery();
             }
@@ -156,7 +156,7 @@ namespace NDbUnit.Core
                 }
             }
 
-            IDbConnection dbConnection = dbCommandBuilder.Connection;
+            DbConnection dbConnection = dbCommandBuilder.Connection;
             try
             {
                 dbConnection.Open();
@@ -199,8 +199,8 @@ namespace NDbUnit.Core
             IDbCommandBuilder dbCommandBuilder = GetDbCommandBuilder();
             IDbOperation dbOperation = GetDbOperation();
 
-            IDbTransaction dbTransaction = null;
-            IDbConnection dbConnection = dbCommandBuilder.Connection;
+            DbTransaction dbTransaction = null;
+            DbConnection dbConnection = dbCommandBuilder.Connection;
 
             try
             {
@@ -363,11 +363,11 @@ namespace NDbUnit.Core
             _initialized = true;
         }
 
-        protected abstract IDbDataAdapter CreateDataAdapter(IDbCommand command);
+        protected abstract DbDataAdapter CreateDataAdapter(DbCommand command);
 
         //protected abstract IDbCommandBuilder CreateDbCommandBuilder(string connectionString);
 
-        //protected abstract IDbCommandBuilder CreateDbCommandBuilder(IDbConnection connection);
+        //protected abstract IDbCommandBuilder CreateDbCommandBuilder(DbConnection connection);
 
         protected abstract IDbCommandBuilder CreateDbCommandBuilder(DbConnectionManager<TDbConnection> connectionManager);
 
@@ -398,11 +398,11 @@ namespace NDbUnit.Core
             return new FileStream(xmlSchemaFile, FileMode.Open, FileAccess.Read, FileShare.Read);
         }
 
-        protected virtual void OnGetDataSetFromDb(string tableName, ref DataSet dsToFill, IDbConnection dbConnection)
+        protected virtual void OnGetDataSetFromDb(string tableName, ref DataSet dsToFill, DbConnection dbConnection)
         {
-            IDbCommand selectCommand = GetDbCommandBuilder().GetSelectCommand(tableName);
+            DbCommand selectCommand = GetDbCommandBuilder().GetSelectCommand(tableName);
             selectCommand.Connection = dbConnection;
-            IDbDataAdapter adapter = CreateDataAdapter(selectCommand);
+            DbDataAdapter adapter = CreateDataAdapter(selectCommand);
             try
             {
                 ((DbDataAdapter)adapter).Fill(dsToFill, tableName);

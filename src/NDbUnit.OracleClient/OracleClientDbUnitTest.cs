@@ -19,6 +19,7 @@
  */
 
 using System.Data;
+using System.Data.Common;
 using NDbUnit.Core;
 using Oracle.DataAccess.Client;
 
@@ -36,7 +37,7 @@ namespace NDbUnit.OracleClient
         {
         }
 
-        protected override IDbDataAdapter CreateDataAdapter(IDbCommand command)
+        protected override DbDataAdapter CreateDataAdapter(DbCommand command)
         {
             OracleDataAdapter oda = new OracleDataAdapter();
             oda.SelectCommand = (OracleCommand)command;

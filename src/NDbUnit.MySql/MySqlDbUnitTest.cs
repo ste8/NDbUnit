@@ -52,7 +52,7 @@ namespace NDbUnit.Core.MySqlClient
         {
         }
 
-        protected override IDbDataAdapter CreateDataAdapter(IDbCommand command)
+        protected override DbDataAdapter CreateDataAdapter(DbCommand command)
         {
             return null;
             //return new MySqlDataAdapter((MySqlCommand) command);
@@ -68,7 +68,7 @@ namespace NDbUnit.Core.MySqlClient
             return new MySqlDbOperation();
         }
 
-        protected override void OnGetDataSetFromDb(string tableName, ref DataSet dsToFill, IDbConnection dbConnection)
+        protected override void OnGetDataSetFromDb(string tableName, ref DataSet dsToFill, DbConnection dbConnection)
         {
             MySqlCommand selectCommand = (MySqlCommand)GetDbCommandBuilder().GetSelectCommand(tableName);
             selectCommand.Connection = dbConnection as MySqlConnection;

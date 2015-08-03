@@ -41,7 +41,7 @@ namespace NDbUnit.Core.SqlServerCe
             get { return "]"; }
         }
 
-        protected override IDbCommand CreateDbCommand()
+        protected override DbCommand CreateDbCommand()
         {
             SqlCeCommand command = new SqlCeCommand();
 
@@ -57,7 +57,7 @@ namespace NDbUnit.Core.SqlServerCe
                                       (int)dataRow["ColumnSize"], (string)dataRow["ColumnName"]);
         }
 
-        protected override IDbConnection GetConnection(string connectionString)
+        protected override DbConnection GetConnection(string connectionString)
         {
             return new SqlCeConnection(connectionString);
         }

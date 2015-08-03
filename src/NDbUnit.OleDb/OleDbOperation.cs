@@ -44,17 +44,17 @@ namespace NDbUnit.Core.OleDb
             set { _oleOleDbType = value; }
         }
 
-        protected override IDbDataAdapter CreateDbDataAdapter()
+        protected override DbDataAdapter CreateDbDataAdapter()
         {
             return new OleDbDataAdapter();
         }
 
-        protected override IDbCommand CreateDbCommand(string cmdText)
+        protected override DbCommand CreateDbCommand(string cmdText)
         {
             return new OleDbCommand(cmdText);
         }
 
-        protected override void OnInsertIdentity(DataTable dataTable, IDbCommand dbCommand, IDbTransaction dbTransaction)
+        protected override void OnInsertIdentity(DataTable dataTable, DbCommand dbCommand, DbTransaction dbTransaction)
         {
             if (_oleOleDbType == OleDbType.SqlServer)
             {
@@ -62,29 +62,29 @@ namespace NDbUnit.Core.OleDb
             }
         }
 
-        protected override void EnableTableConstraints(DataTable dataTable, IDbTransaction dbTransaction)
+        protected override void EnableTableConstraints(DataTable dataTable, DbTransaction dbTransaction)
         {
             if (_oleOleDbType != OleDbType.SqlServer) return;
 
             DbCommand sqlCommand =
-                    (DbCommand)CreateDbCommand("ALTER TABLE " +
+                    CreateDbCommand("ALTER TABLE " +
                                     TableNameHelper.FormatTableName(dataTable.TableName, QuotePrefix, QuoteSuffix) +
                                     " CHECK CONSTRAINT ALL");
-            sqlCommand.Connection = (DbConnection)dbTransaction.Connection;
-            sqlCommand.Transaction = (DbTransaction)dbTransaction;
+            sqlCommand.Connection = dbTransaction.Connection;
+            sqlCommand.Transaction = dbTransaction;
             sqlCommand.ExecuteNonQuery();
         }
 
-        protected override void DisableTableConstraints(DataTable dataTable, IDbTransaction dbTransaction)
+        protected override void DisableTableConstraints(DataTable dataTable, DbTransaction dbTransaction)
         {
             if (_oleOleDbType != OleDbType.SqlServer) return;
 
             DbCommand sqlCommand =
-                    (DbCommand)CreateDbCommand("ALTER TABLE " +
+                    CreateDbCommand("ALTER TABLE " +
                                     TableNameHelper.FormatTableName(dataTable.TableName, QuotePrefix, QuoteSuffix) +
                                     " NOCHECK CONSTRAINT ALL");
-            sqlCommand.Connection = (DbConnection)dbTransaction.Connection;
-            sqlCommand.Transaction = (DbTransaction)dbTransaction;
+            sqlCommand.Connection = dbTransaction.Connection;
+            sqlCommand.Transaction = dbTransaction;
             sqlCommand.ExecuteNonQuery();
 
         }

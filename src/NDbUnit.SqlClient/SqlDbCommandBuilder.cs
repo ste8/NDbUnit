@@ -47,7 +47,7 @@ namespace NDbUnit.Core.SqlClient
             get { return "]"; }
         }
 
-        protected override IDbCommand CreateDbCommand()
+        protected override DbCommand CreateDbCommand()
         {
             SqlCommand command = new SqlCommand();
             if (CommandTimeOutSeconds != 0)
@@ -62,7 +62,7 @@ namespace NDbUnit.Core.SqlClient
                                     (int)dataRow["ColumnSize"], (string)dataRow["ColumnName"]);
         }
 
-        protected override IDbConnection GetConnection(string connectionString)
+        protected override DbConnection GetConnection(string connectionString)
         {
             return new SqlConnection(connectionString);
         }

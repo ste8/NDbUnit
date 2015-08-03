@@ -122,7 +122,7 @@ namespace NDbUnit.Test.SqlClient
 
         protected override IDisposableDbCommandBuilder GetDbCommandBuilder()
         {
-            var connectionManager = new DbConnectionManager<SQLiteConnection>(DbConnection.SqlLiteConnectionString);
+            var connectionManager = new DbConnectionManager<SQLiteConnection>(DbConnections.SqlLiteConnectionString);
             return new DisposableDbCommandBuilder<SQLiteConnection>(connectionManager, new SqlLiteDbCommandBuilder(connectionManager));
         }
 

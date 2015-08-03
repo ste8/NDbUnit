@@ -25,6 +25,7 @@ using System.Data;
 using NDbUnit.Core;
 using NUnit.Framework;
 using Oracle.DataAccess.Client;
+using System.Data.Common;
 
 namespace NDbUnit.Test.OracleClient
 {
@@ -38,7 +39,7 @@ namespace NDbUnit.Test.OracleClient
 
         protected override NDbUnit.Core.IDbCommandBuilder GetCommandBuilder()
         {
-            return new OracleClientDbCommandBuilder(new DbConnectionManager<OracleConnection>(DbConnection.OracleClientConnectionString));
+            return new OracleClientDbCommandBuilder(new DbConnectionManager<OracleConnection>(DbConnections.OracleClientConnectionString));
         }
 
         protected override NDbUnit.Core.IDbOperation GetDbOperation()
@@ -46,7 +47,7 @@ namespace NDbUnit.Test.OracleClient
             return new OracleClientDbOperation();
         }
 
-        protected override IDbCommand GetResetIdentityColumnsDbCommand(DataTable table, DataColumn column)
+        protected override DbCommand GetResetIdentityColumnsDbCommand(DataTable table, DataColumn column)
         {
             throw new NotSupportedException("GetResetIdentityColumnsDbCommand not supported!");
         }

@@ -38,25 +38,25 @@ namespace NDbUnit.Core.MySqlClient
             get { return "]"; }
         }
 
-        protected override IDbDataAdapter CreateDbDataAdapter()
+        protected override DbDataAdapter CreateDbDataAdapter()
         {
             return new MySqlDataAdapter();
         }
 
-        protected override IDbCommand CreateDbCommand(string cmdText)
+        protected override DbCommand CreateDbCommand(string cmdText)
         {
             return new MySqlCommand(cmdText);
         }
 
-        protected override void OnInsertIdentity(DataTable dataTable, IDbCommand dbCommand, IDbTransaction dbTransaction)
+        protected override void OnInsertIdentity(DataTable dataTable, DbCommand dbCommand, DbTransaction dbTransaction)
         {
-            IDbTransaction sqlTransaction = (IDbTransaction)dbTransaction;
+            DbTransaction sqlTransaction = dbTransaction;
 
             try
             {
                 DisableTableConstraints(dataTable, dbTransaction);
 
-                IDbDataAdapter sqlDataAdapter = CreateDbDataAdapter();
+                DbDataAdapter sqlDataAdapter = CreateDbDataAdapter();
                 try
                 {
                     sqlDataAdapter.InsertCommand = dbCommand;
@@ -83,7 +83,7 @@ namespace NDbUnit.Core.MySqlClient
             }
         }
 
-        protected override void EnableTableConstraints(DataTable dataTable, IDbTransaction dbTransaction)
+        protected override void EnableTableConstraints(DataTable dataTable, DbTransaction dbTransaction)
         {
             MySqlCommand sqlCommand = (MySqlCommand)CreateDbCommand("SET foreign_key_checks = 1;");
             sqlCommand.Connection = (MySqlConnection)dbTransaction.Connection;
@@ -91,7 +91,7 @@ namespace NDbUnit.Core.MySqlClient
             sqlCommand.ExecuteNonQuery();
         }
 
-        protected override void DisableTableConstraints(DataTable dataTable, IDbTransaction dbTransaction)
+        protected override void DisableTableConstraints(DataTable dataTable, DbTransaction dbTransaction)
         {
             MySqlCommand sqlCommand = (MySqlCommand)CreateDbCommand("SET foreign_key_checks = 0;");
             sqlCommand.Connection = (MySqlConnection)dbTransaction.Connection;

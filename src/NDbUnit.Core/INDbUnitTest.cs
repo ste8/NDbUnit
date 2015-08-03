@@ -76,7 +76,7 @@ namespace NDbUnit.Core
 
         /// <summary>
         /// Read in an xml file whose data should be conform to the schema 
-        /// of the file specified in the call to <see cref="ReadXmlSchema" />.  
+        /// of the file specified in the call to <see cref="ReadXmlSchema(string)" />.  
         /// If the data does not conform to the schema, it will be ignored.  
         /// This data is used to update the database.
         /// </summary>
@@ -86,7 +86,7 @@ namespace NDbUnit.Core
 
         /// <summary>
         /// Read in an xml stream whose data should be conform to the schema 
-        /// specified in the call to <see cref="ReadXmlSchema" />.  
+        /// specified in the call to <see cref="ReadXmlSchema(string)" />.  
         /// If the data does not conform to the schema, it will be ignored.  
         /// This data is used to update the database.
         /// </summary>
@@ -96,7 +96,7 @@ namespace NDbUnit.Core
 
         /// <summary>
         /// Read in an xml file whose data should be conform to the schema 
-        /// of the file specified in the call to <see cref="ReadXmlSchema" />.  
+        /// of the file specified in the call to <see cref="ReadXmlSchema(string)" />.  
         /// The data is appended to any existing data in the dataset.
         /// If the data does not conform to the schema, it will be ignored.  
         /// This data is used to update the database.
@@ -107,7 +107,7 @@ namespace NDbUnit.Core
 
         /// <summary>
         /// Read in an xml stream whose data should be conform to the schema 
-        /// specified in the call to <see cref="ReadXmlSchema" />.
+        /// specified in the call to <see cref="ReadXmlSchema(string)" />.
         /// The data is appended to any existing data in the dataset.
         /// If the data does not conform to the schema, it will be ignored.  
         /// This data is used to update the database.

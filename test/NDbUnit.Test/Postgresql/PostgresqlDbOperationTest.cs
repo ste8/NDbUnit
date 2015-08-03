@@ -20,6 +20,7 @@
 
 using System;
 using System.Data;
+using System.Data.Common;
 using NDbUnit.Core;
 using NDbUnit.Postgresql;
 using NDbUnit.Test.Common;
@@ -34,7 +35,7 @@ namespace NDbUnit.Test.Postgresql
     {
         protected override IDbCommandBuilder GetCommandBuilder()
         {
-            return new PostgresqlDbCommandBuilder(new DbConnectionManager<NpgsqlConnection>(DbConnection.PostgresqlConnectionString));
+            return new PostgresqlDbCommandBuilder(new DbConnectionManager<NpgsqlConnection>(DbConnections.PostgresqlConnectionString));
         }
 
         protected override IDbOperation GetDbOperation()
@@ -43,7 +44,7 @@ namespace NDbUnit.Test.Postgresql
         }
 
 
-        protected override IDbCommand GetResetIdentityColumnsDbCommand(DataTable table, DataColumn column)
+        protected override DbCommand GetResetIdentityColumnsDbCommand(DataTable table, DataColumn column)
         {
             String sql = string.Format("ALTER SEQUENCE \"{0}_{1}_seq\" RESTART WITH 1;", table.TableName,
                                        column.ColumnName);

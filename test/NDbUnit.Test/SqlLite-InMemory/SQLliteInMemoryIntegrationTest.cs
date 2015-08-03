@@ -21,6 +21,7 @@
 using NDbUnit.Core.SqlLite;
 using System.Data.SQLite;
 using System.Data;
+using System.Data.Common;
 using System.IO;
 using NDbUnit.Core;
 using System.Diagnostics;
@@ -37,7 +38,7 @@ namespace NDbUnit.Test.SqlLite_InMemory
         [TestFixtureSetUp]
         public void _TestFixtureSetUp()
         {
-            _connection = new SQLiteConnection(DbConnection.SqlLiteInMemConnectionString);
+            _connection = new SQLiteConnection(DbConnections.SqlLiteInMemConnectionString);
             ExecuteSchemaCreationScript();
         }
 
@@ -72,7 +73,7 @@ namespace NDbUnit.Test.SqlLite_InMemory
 
         private void ExecuteSchemaCreationScript()
         {
-            IDbCommand command = _connection.CreateCommand();
+            DbCommand command = _connection.CreateCommand();
             command.CommandText = ReadTextFromFile(@"scripts\sqlite-testdb-create.sql");
 
             if (_connection.State != ConnectionState.Open)

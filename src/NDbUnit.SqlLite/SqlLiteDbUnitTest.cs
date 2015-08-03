@@ -37,7 +37,7 @@ namespace NDbUnit.Core.SqlLite
         {
         }
 
-        protected override IDbDataAdapter CreateDataAdapter(IDbCommand command)
+        protected override DbDataAdapter CreateDataAdapter(DbCommand command)
         {
             return new SQLiteDataAdapter((SQLiteCommand)command);
         }
@@ -47,7 +47,7 @@ namespace NDbUnit.Core.SqlLite
             return new SqlLiteDbCommandBuilder(connectionManager);
         }
         
-        //protected override IDbCommandBuilder CreateDbCommandBuilder(IDbConnection connection)
+        //protected override IDbCommandBuilder CreateDbCommandBuilder(DbConnection connection)
         //{
         //    return new SqlLiteDbCommandBuilder(connection);
         //}

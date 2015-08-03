@@ -41,37 +41,37 @@ namespace NDbUnit.Postgresql
             get { return QuotePrefix; }
         }
 
-        protected override IDbCommand CreateDbCommand(string cmdText)
+        protected override DbCommand CreateDbCommand(string cmdText)
         {
             return new NpgsqlCommand(cmdText);
         }
 
-        protected override IDbDataAdapter CreateDbDataAdapter()
+        protected override DbDataAdapter CreateDbDataAdapter()
         {
             return new NpgsqlDataAdapter();
         }
 
-        protected override void DisableTableConstraints(DataTable dataTable, IDbTransaction dbTransaction)
+        protected override void DisableTableConstraints(DataTable dataTable, DbTransaction dbTransaction)
         {
             enableDisableTableConstraints(false, dataTable.TableName, dbTransaction);
         }
 
-        protected override void EnableTableConstraints(DataTable dataTable, IDbTransaction dbTransaction)
+        protected override void EnableTableConstraints(DataTable dataTable, DbTransaction dbTransaction)
         {
             enableDisableTableConstraints(true, dataTable.TableName, dbTransaction);
         }
 
-        protected override void OnInsertIdentity(DataTable dataTable, IDbCommand dbCommand, IDbTransaction dbTransaction)
+        protected override void OnInsertIdentity(DataTable dataTable, DbCommand dbCommand, DbTransaction dbTransaction)
         {
             //throw new NotSupportedException("OnInsertIdentity not supported!");
 
-            IDbTransaction sqlTransaction = dbTransaction;
+            DbTransaction sqlTransaction = dbTransaction;
 
             //DisableTableConstraints(dataTable, dbTransaction);
 
             try
             {
-                IDbDataAdapter sqlDataAdapter = CreateDbDataAdapter();
+                DbDataAdapter sqlDataAdapter = CreateDbDataAdapter();
                 try
                 {
                     sqlDataAdapter.InsertCommand = dbCommand;
@@ -94,12 +94,12 @@ namespace NDbUnit.Postgresql
                 {
                     if (column.AutoIncrement)
                     {
-                        IDbCommand selectMaxCommand = CreateDbCommand(string.Format("SELECT MAX({0}{2}{1}) FROM {3}", QuotePrefix, QuoteSuffix, column.ColumnName, TableNameHelper.FormatTableName(dataTable.TableName, QuotePrefix, QuoteSuffix)));
+                        DbCommand selectMaxCommand = CreateDbCommand(string.Format("SELECT MAX({0}{2}{1}) FROM {3}", QuotePrefix, QuoteSuffix, column.ColumnName, TableNameHelper.FormatTableName(dataTable.TableName, QuotePrefix, QuoteSuffix)));
                         selectMaxCommand.Connection = sqlTransaction.Connection;
                         selectMaxCommand.Transaction = sqlTransaction;
                         int count = (int)selectMaxCommand.ExecuteScalar();
 
-                        IDbCommand sqlCommand =
+                        DbCommand sqlCommand =
                             CreateDbCommand(string.Format("ALTER SEQUENCE \"{0}_{1}_seq\" RESTART WITH {2}",
                                                           dataTable.TableName, column.ColumnName, count));
                         sqlCommand.Connection = sqlTransaction.Connection;
@@ -117,7 +117,7 @@ namespace NDbUnit.Postgresql
 
         }
 
-        private void enableDisableTableConstraints(bool enableConstraint, string tableName, IDbTransaction dbTransaction)
+        private void enableDisableTableConstraints(bool enableConstraint, string tableName, DbTransaction dbTransaction)
         {
             var queryEnables =
                 string.Format("ALTER TABLE \"{0}\" {1} TRIGGER ALL",

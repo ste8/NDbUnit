@@ -22,6 +22,8 @@ using System;
 using System.Collections.Generic;
 using NDbUnit.Core;
 using System.Data;
+using System.Data.Common;
+
 using NUnit.Framework;
 
 namespace NDbUnit.Test.Common
@@ -69,7 +71,7 @@ namespace NDbUnit.Test.Common
             DataSet ds = _commandBuilder.GetSchema();
             foreach (DataTable dataTable in ds.Tables)
             {
-                using (IDbCommand dbCommand = _commandBuilder.GetDeleteAllCommand(dataTable.TableName))
+                using (DbCommand dbCommand = _commandBuilder.GetDeleteAllCommand(dataTable.TableName))
                 {
                     commandList.Add(dbCommand.CommandText);
 
@@ -90,7 +92,7 @@ namespace NDbUnit.Test.Common
             DataSet ds = _commandBuilder.GetSchema();
             foreach (DataTable dataTable in ds.Tables)
             {
-                using (IDbCommand dbCommand = _commandBuilder.GetDeleteCommand(dataTable.TableName))
+                using (DbCommand dbCommand = _commandBuilder.GetDeleteCommand(dataTable.TableName))
                 {
                     commandList.Add(dbCommand.CommandText);
 
@@ -111,7 +113,7 @@ namespace NDbUnit.Test.Common
 
             foreach (DataTable dataTable in ds.Tables)
             {
-                using (IDbCommand dbCommand = _commandBuilder.GetInsertCommand(dataTable.TableName))
+                using (DbCommand dbCommand = _commandBuilder.GetInsertCommand(dataTable.TableName))
                 {
                     commandList.Add(dbCommand.CommandText);
 
@@ -132,7 +134,7 @@ namespace NDbUnit.Test.Common
 
             foreach (DataTable dataTable in ds.Tables)
             {
-                using (IDbCommand dbCommand = _commandBuilder.GetInsertIdentityCommand(dataTable.TableName))
+                using (DbCommand dbCommand = _commandBuilder.GetInsertIdentityCommand(dataTable.TableName))
                 {
                     commandList.Add(dbCommand.CommandText);
 
@@ -191,7 +193,7 @@ namespace NDbUnit.Test.Common
             DataSet ds = _commandBuilder.GetSchema();
             foreach (DataTable dataTable in ds.Tables)
             {
-                using (IDbCommand dbCommand = _commandBuilder.GetSelectCommand(dataTable.TableName))
+                using (DbCommand dbCommand = _commandBuilder.GetSelectCommand(dataTable.TableName))
                 {
                     commandList.Add(dbCommand.CommandText);
 
@@ -212,7 +214,7 @@ namespace NDbUnit.Test.Common
             DataSet ds = _commandBuilder.GetSchema();
             foreach (DataTable dataTable in ds.Tables)
             {
-                using (IDbCommand dbCommand = _commandBuilder.GetUpdateCommand(dataTable.TableName))
+                using (DbCommand dbCommand = _commandBuilder.GetUpdateCommand(dataTable.TableName))
                 {
                     commandList.Add(dbCommand.CommandText);
 

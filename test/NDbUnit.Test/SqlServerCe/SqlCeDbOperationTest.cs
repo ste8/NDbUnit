@@ -24,6 +24,7 @@ using System.Data;
 using System.Data.SqlServerCe;
 using NDbUnit.Core;
 using NUnit.Framework;
+using System.Data.Common;
 
 namespace NDbUnit.Test.SqlServerCe
 {
@@ -33,7 +34,7 @@ namespace NDbUnit.Test.SqlServerCe
     {
         protected override NDbUnit.Core.IDbCommandBuilder GetCommandBuilder()
         {
-            return new SqlCeDbCommandBuilder(new DbConnectionManager<SqlCeConnection>(DbConnection.SqlCeConnectionString));
+            return new SqlCeDbCommandBuilder(new DbConnectionManager<SqlCeConnection>(DbConnections.SqlCeConnectionString));
         }
 
         protected override NDbUnit.Core.IDbOperation GetDbOperation()
@@ -41,7 +42,7 @@ namespace NDbUnit.Test.SqlServerCe
             return new SqlCeDbOperation();
         }
 
-        protected override IDbCommand GetResetIdentityColumnsDbCommand(DataTable table, DataColumn column)
+        protected override DbCommand GetResetIdentityColumnsDbCommand(DataTable table, DataColumn column)
         {
             String sql = "ALTER TABLE [" + table.TableName + "] ALTER COLUMN [" + column.ColumnName +
                                          "] IDENTITY (1,1)";

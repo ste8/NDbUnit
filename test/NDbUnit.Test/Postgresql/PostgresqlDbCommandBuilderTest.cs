@@ -122,7 +122,7 @@ namespace NDbUnit.Test.Postgresql
 
         protected override IDisposableDbCommandBuilder GetDbCommandBuilder()
         {
-            var connectionManager = new DbConnectionManager<NpgsqlConnection>(DbConnection.PostgresqlConnectionString);
+            var connectionManager = new DbConnectionManager<NpgsqlConnection>(DbConnections.PostgresqlConnectionString);
             return new DisposableDbCommandBuilder<NpgsqlConnection>(connectionManager, new PostgresqlDbCommandBuilder(connectionManager));
         }
 

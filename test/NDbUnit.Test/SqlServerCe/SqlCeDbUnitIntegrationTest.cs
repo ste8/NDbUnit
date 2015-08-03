@@ -28,7 +28,7 @@ namespace NDbUnit.Test.SqlServerCe
     {
         protected override NDbUnit.Core.INDbUnitTest GetNDbUnitTest()
         {
-            return new SqlCeDbUnitTest(DbConnection.SqlCeConnectionString);
+            return new SqlCeDbUnitTest(DbConnections.SqlCeConnectionString);
         }
 
         protected override string GetXmlFilename()

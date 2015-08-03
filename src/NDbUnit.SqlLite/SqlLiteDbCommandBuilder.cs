@@ -35,7 +35,7 @@ namespace NDbUnit.Core.SqlLite
         {
         }
 
-        //public SqlLiteDbCommandBuilder(IDbConnection connection)
+        //public SqlLiteDbCommandBuilder(DbConnection connection)
         //    : base(connection)
         //{
         //}
@@ -50,7 +50,7 @@ namespace NDbUnit.Core.SqlLite
             get { return "]"; }
         }
 
-        protected override IDbCommand CreateDbCommand()
+        protected override DbCommand CreateDbCommand()
         {
             var command = new SQLiteCommand();
 
@@ -60,13 +60,13 @@ namespace NDbUnit.Core.SqlLite
             return command;
         }
 
-        protected override IDbCommand CreateDeleteAllCommand(string tableName)
+        protected override DbCommand CreateDeleteAllCommand(string tableName)
         {
             return
                 new SQLiteCommand("DELETE FROM " + TableNameHelper.FormatTableName(tableName, QuotePrefix, QuoteSuffix));
         }
 
-        protected override IDbCommand CreateDeleteCommand(IDbCommand selectCommand, string tableName)
+        protected override DbCommand CreateDeleteCommand(DbCommand selectCommand, string tableName)
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("DELETE FROM " + TableNameHelper.FormatTableName(tableName, QuotePrefix, QuoteSuffix) + " WHERE ");
@@ -103,7 +103,7 @@ namespace NDbUnit.Core.SqlLite
             return sqlDeleteCommand;
         }
 
-        protected override IDbCommand CreateInsertCommand(IDbCommand selectCommand, string tableName)
+        protected override DbCommand CreateInsertCommand(DbCommand selectCommand, string tableName)
         {
             int count = 1;
             bool notFirstColumn = false;
@@ -145,7 +145,7 @@ namespace NDbUnit.Core.SqlLite
             return sqlInsertCommand;
         }
 
-        protected override IDbCommand CreateInsertIdentityCommand(IDbCommand selectCommand, string tableName)
+        protected override DbCommand CreateInsertIdentityCommand(DbCommand selectCommand, string tableName)
         {
             int count = 1;
             bool notFirstColumn = false;
@@ -191,7 +191,7 @@ namespace NDbUnit.Core.SqlLite
                                        (string)dataRow[SchemaColumns.ColumnName]);
         }
 
-        protected override IDbCommand CreateSelectCommand(DataSet ds, string tableName)
+        protected override DbCommand CreateSelectCommand(DataSet ds, string tableName)
         {
             SQLiteCommand sqlSelectCommand = CreateDbCommand() as SQLiteCommand;
 
@@ -232,7 +232,7 @@ namespace NDbUnit.Core.SqlLite
             return sqlSelectCommand;
         }
 
-        protected override IDbCommand CreateUpdateCommand(IDbCommand selectCommand, string tableName)
+        protected override DbCommand CreateUpdateCommand(DbCommand selectCommand, string tableName)
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("UPDATE " + TableNameHelper.FormatTableName(tableName, QuotePrefix, QuoteSuffix) + " SET ");
@@ -306,7 +306,7 @@ namespace NDbUnit.Core.SqlLite
             return sqlUpdateCommand;
         }
 
-        protected override IDbConnection GetConnection(string connectionString)
+        protected override DbConnection GetConnection(string connectionString)
         {
             return new SQLiteConnection(connectionString);
         }

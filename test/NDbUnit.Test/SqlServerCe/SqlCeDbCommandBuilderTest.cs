@@ -122,7 +122,7 @@ namespace NDbUnit.Test.SqlServerCe
 
         protected override IDisposableDbCommandBuilder GetDbCommandBuilder()
         {
-            var connectionManager = new DbConnectionManager<SqlCeConnection>(DbConnection.SqlCeConnectionString);
+            var connectionManager = new DbConnectionManager<SqlCeConnection>(DbConnections.SqlCeConnectionString);
             return new DisposableDbCommandBuilder<SqlCeConnection>(connectionManager, new SqlCeDbCommandBuilder(connectionManager));
         }
 

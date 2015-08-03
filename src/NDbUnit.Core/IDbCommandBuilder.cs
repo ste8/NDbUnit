@@ -19,6 +19,7 @@
  */
 
 using System.Data;
+using System.Data.Common;
 using System.IO;
 
 namespace NDbUnit.Core
@@ -36,7 +37,7 @@ namespace NDbUnit.Core
             get;
         }
 
-        IDbConnection Connection
+        DbConnection Connection
         {
             get;
         }
@@ -45,11 +46,11 @@ namespace NDbUnit.Core
         DataSet GetSchema();
         void BuildCommands(string xmlSchemaFile);
         void BuildCommands(Stream xmlSchema);
-        IDbCommand GetSelectCommand(string tableName);
-        IDbCommand GetInsertCommand(string tableName);
-        IDbCommand GetInsertIdentityCommand(string tableName);
-        IDbCommand GetDeleteCommand(string tableName);
-        IDbCommand GetDeleteAllCommand(string tableName);
-        IDbCommand GetUpdateCommand(string tableName);
+        DbCommand GetSelectCommand(string tableName);
+        DbCommand GetInsertCommand(string tableName);
+        DbCommand GetInsertIdentityCommand(string tableName);
+        DbCommand GetDeleteCommand(string tableName);
+        DbCommand GetDeleteAllCommand(string tableName);
+        DbCommand GetUpdateCommand(string tableName);
     }
 }

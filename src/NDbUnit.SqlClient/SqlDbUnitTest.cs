@@ -51,7 +51,7 @@ namespace NDbUnit.Core.SqlClient
         {
         }
 
-        protected override IDbDataAdapter CreateDataAdapter(IDbCommand command)
+        protected override DbDataAdapter CreateDataAdapter(DbCommand command)
         {
             return new SqlDataAdapter((SqlCommand)command);
         }
@@ -63,7 +63,7 @@ namespace NDbUnit.Core.SqlClient
             return commandBuilder;
         }
 
-        //protected override IDbCommandBuilder CreateDbCommandBuilder(IDbConnection connection)
+        //protected override IDbCommandBuilder CreateDbCommandBuilder(DbConnection connection)
         //{
         //    SqlDbCommandBuilder commandBuilder = new SqlDbCommandBuilder(connection);
         //    commandBuilder.CommandTimeOutSeconds = this.CommandTimeOut;

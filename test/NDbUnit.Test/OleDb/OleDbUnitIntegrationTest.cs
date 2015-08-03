@@ -32,7 +32,7 @@ namespace NDbUnit.Test.SqlClient
     {
         protected override NDbUnit.Core.INDbUnitTest GetNDbUnitTest()
         {
-            return new OleDbUnitTest(DbConnection.OleDbConnectionString);
+            return new OleDbUnitTest(DbConnections.OleDbConnectionString);
         }
 
         protected override string GetXmlFilename()

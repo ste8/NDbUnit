@@ -9,7 +9,7 @@ namespace NDbUnit.Test.SqlClient
         [Test]
         public void DataSet_Contains_Both_Appended_and_New_Records()
         {
-            var db = new NDbUnit.Core.SqlClient.SqlDbUnitTest(DbConnection.SqlConnectionString);
+            var db = new NDbUnit.Core.SqlClient.SqlDbUnitTest(DbConnections.SqlConnectionString);
             db.ReadXmlSchema(XmlTestFiles.SqlServer.XmlSchemaFile);
             db.ReadXml(XmlTestFiles.SqlServer.XmlFile);
 

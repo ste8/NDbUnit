@@ -39,32 +39,32 @@ namespace NDbUnit.OracleClient
             get { return QuotePrefix; }
         }
 
-        protected override IDbCommand CreateDbCommand(string cmdText)
+        protected override DbCommand CreateDbCommand(string cmdText)
         {
             return new OracleCommand(cmdText);
         }
 
-        protected override IDbDataAdapter CreateDbDataAdapter()
+        protected override DbDataAdapter CreateDbDataAdapter()
         {
             return new OracleDataAdapter();
         }
 
-        protected override void DisableTableConstraints(DataTable dataTable, IDbTransaction dbTransaction)
+        protected override void DisableTableConstraints(DataTable dataTable, DbTransaction dbTransaction)
         {
             this.enableDisableTableConstraints("DISABLE", dataTable, dbTransaction);
         }
 
-        protected override void EnableTableConstraints(DataTable dataTable, IDbTransaction dbTransaction)
+        protected override void EnableTableConstraints(DataTable dataTable, DbTransaction dbTransaction)
         {
             this.enableDisableTableConstraints("ENABLE", dataTable, dbTransaction);
         }
 
-        protected override void OnInsertIdentity(DataTable dataTable, IDbCommand dbCommand, IDbTransaction dbTransaction)
+        protected override void OnInsertIdentity(DataTable dataTable, DbCommand dbCommand, DbTransaction dbTransaction)
         {
             throw new NotSupportedException("OnInsertIdentity not supported!");
         }
 
-        private void enableDisableTableConstraints(String enableDisable, DataTable dataTable, IDbTransaction dbTransaction)
+        private void enableDisableTableConstraints(String enableDisable, DataTable dataTable, DbTransaction dbTransaction)
         {
             DbCommand dbCommand = null;
             DbParameter dbParam = null;
@@ -82,8 +82,8 @@ namespace NDbUnit.OracleClient
 
             dbCommand = new OracleCommand();
             dbCommand.CommandText = queryEnables;
-            dbCommand.Connection = (DbConnection)dbTransaction.Connection;
-            dbCommand.Transaction = (DbTransaction)dbTransaction;
+            dbCommand.Connection = dbTransaction.Connection;
+            dbCommand.Transaction = dbTransaction;
 
             dbParam = new OracleParameter();
             dbParam.ParameterName = "tabela";
@@ -106,8 +106,8 @@ namespace NDbUnit.OracleClient
 
                 dbCommand = new OracleCommand();
                 dbCommand.CommandText = escapedCommand;
-                dbCommand.Connection = (DbConnection)dbTransaction.Connection;
-                dbCommand.Transaction = (DbTransaction)dbTransaction;
+                dbCommand.Connection = dbTransaction.Connection;
+                dbCommand.Transaction = dbTransaction;
                 dbCommand.ExecuteNonQuery();
             }
         }

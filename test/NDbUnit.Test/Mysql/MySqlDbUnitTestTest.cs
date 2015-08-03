@@ -25,6 +25,7 @@ using System.IO;
 using MySql.Data.MySqlClient;
 using NDbUnit.Core.MySqlClient;
 using NUnit.Framework;
+using System.Data.Common;
 
 namespace NDbUnit.Test.MySqlDb
 {
@@ -45,7 +46,7 @@ namespace NDbUnit.Test.MySqlDb
 
         protected override IUnitTestStub GetUnitTestStub()
         {
-            return new MySqlDbUnitTestStub(DbConnection.MySqlConnectionString);
+            return new MySqlDbUnitTestStub(DbConnections.MySqlConnectionString);
         }
 
         protected override string GetXmlFilename()
@@ -75,7 +76,7 @@ namespace NDbUnit.Test.MySqlDb
                 return _mockDbOperation;
             }
 
-            protected override IDbDataAdapter CreateDataAdapter(IDbCommand command)
+            protected override DbDataAdapter CreateDataAdapter(DbCommand command)
             {
                 return base.CreateDataAdapter(command);
             }

@@ -24,6 +24,7 @@ using System.Data;
 using MySql.Data.MySqlClient;
 using NDbUnit.Core;
 using NUnit.Framework;
+using System.Data.Common;
 
 namespace NDbUnit.Test.Mysql
 {
@@ -33,7 +34,7 @@ namespace NDbUnit.Test.Mysql
     {
         protected override NDbUnit.Core.IDbCommandBuilder GetCommandBuilder()
         {
-            return new MySqlDbCommandBuilder(new DbConnectionManager<MySqlConnection>(DbConnection.MySqlConnectionString));
+            return new MySqlDbCommandBuilder(new DbConnectionManager<MySqlConnection>(DbConnections.MySqlConnectionString));
         }
 
         protected override NDbUnit.Core.IDbOperation GetDbOperation()
@@ -41,7 +42,7 @@ namespace NDbUnit.Test.Mysql
             return new MySqlDbOperation();
         }
 
-        protected override IDbCommand GetResetIdentityColumnsDbCommand(DataTable table, DataColumn column)
+        protected override DbCommand GetResetIdentityColumnsDbCommand(DataTable table, DataColumn column)
         {
             String sql = "ALTER TABLE " + table.TableName + " AUTO_INCREMENT=1;";
             return new MySqlCommand(sql, (MySqlConnection)_commandBuilder.Connection);

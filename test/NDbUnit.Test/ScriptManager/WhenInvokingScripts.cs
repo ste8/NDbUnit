@@ -11,12 +11,12 @@ namespace NDbUnit.Test.ScriptManager
         {
             //you cannot connect to the DB you're planning to create until AFTER you create it, so you must first connect to
             //something 'safe' (like 'master') when executing any DB-create or DB drop scripts!
-            var db = new NDbUnit.Core.SqlClient.SqlDbUnitTest(DbConnection.SqlScriptTestsConnectionString);
+            var db = new NDbUnit.Core.SqlClient.SqlDbUnitTest(DbConnections.SqlScriptTestsConnectionString);
             db.Scripts.AddSingle(@"TestScripts\sqlserver-drop-create-testdb.sql");
             db.ExecuteScripts();
 
             //once the DB has been created, its possible to connect to the new DB and invoke any other scripts as needed
-            db = new NDbUnit.Core.SqlClient.SqlDbUnitTest(DbConnection.SqlConnectionString);
+            db = new NDbUnit.Core.SqlClient.SqlDbUnitTest(DbConnections.SqlConnectionString);
             db.Scripts.AddWithWildcard(@"TestScripts\", "sqlserver-testdb*.sql");
             db.ExecuteScripts();
 

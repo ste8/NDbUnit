@@ -5,7 +5,9 @@ using NDbUnit.Core;
 
 namespace NDbUnit.Test
 {
-    public class DisposableDbCommandBuilder<TDbConnection> : IDisposableDbCommandBuilder where TDbConnection : class, IDbConnection, new()
+    using System.Data.Common;
+
+    public class DisposableDbCommandBuilder<TDbConnection> : IDisposableDbCommandBuilder where TDbConnection : DbConnection, new()
     {
         private readonly DbConnectionManager<TDbConnection> _connectionManager;
 
@@ -33,7 +35,7 @@ namespace NDbUnit.Test
             get { return _commandBuilder.QuoteSuffix; }
         }
 
-        public IDbConnection Connection
+        public DbConnection Connection
         {
             get { return _commandBuilder.Connection; }
         }
@@ -58,32 +60,32 @@ namespace NDbUnit.Test
             _commandBuilder.BuildCommands(xmlSchema);
         }
 
-        public IDbCommand GetSelectCommand(string tableName)
+        public DbCommand GetSelectCommand(string tableName)
         {
             return _commandBuilder.GetSelectCommand(tableName);
         }
 
-        public IDbCommand GetInsertCommand(string tableName)
+        public DbCommand GetInsertCommand(string tableName)
         {
             return _commandBuilder.GetInsertCommand(tableName);
         }
 
-        public IDbCommand GetInsertIdentityCommand(string tableName)
+        public DbCommand GetInsertIdentityCommand(string tableName)
         {
             return _commandBuilder.GetInsertIdentityCommand(tableName);
         }
 
-        public IDbCommand GetDeleteCommand(string tableName)
+        public DbCommand GetDeleteCommand(string tableName)
         {
             return _commandBuilder.GetDeleteCommand(tableName);
         }
 
-        public IDbCommand GetDeleteAllCommand(string tableName)
+        public DbCommand GetDeleteAllCommand(string tableName)
         {
             return _commandBuilder.GetDeleteAllCommand(tableName);
         }
 
-        public IDbCommand GetUpdateCommand(string tableName)
+        public DbCommand GetUpdateCommand(string tableName)
         {
             return _commandBuilder.GetUpdateCommand(tableName);
         }

@@ -25,6 +25,7 @@ using System.Data.SQLite;
 using System.IO;
 using NDbUnit.Core.SqlLite;
 using NUnit.Framework;
+using System.Data.Common;
 
 namespace NDbUnit.Test.SqlLite
 {
@@ -45,7 +46,7 @@ namespace NDbUnit.Test.SqlLite
 
         protected override IUnitTestStub GetUnitTestStub()
         {
-            return new SqliteDbUnitTestStub(DbConnection.SqlLiteConnectionString);
+            return new SqliteDbUnitTestStub(DbConnections.SqlLiteConnectionString);
         }
 
         protected override string GetXmlFilename()
@@ -75,7 +76,7 @@ namespace NDbUnit.Test.SqlLite
                 return _mockDbOperation;
             }
 
-            protected override IDbDataAdapter CreateDataAdapter(IDbCommand command)
+            protected override DbDataAdapter CreateDataAdapter(DbCommand command)
             {
                 return base.CreateDataAdapter(command);
             }

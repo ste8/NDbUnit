@@ -22,7 +22,7 @@ using System.Configuration;
 
 namespace NDbUnit.Test
 {
-    public class DbConnection
+    public static class DbConnections
     {
         public static string PostgresqlConnectionString
         {

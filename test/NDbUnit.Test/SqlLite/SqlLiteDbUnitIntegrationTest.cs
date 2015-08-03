@@ -28,7 +28,7 @@ namespace NDbUnit.Test.SqlLite
     {
         protected override NDbUnit.Core.INDbUnitTest GetNDbUnitTest()
         {
-            return new SqlLiteDbUnitTest(DbConnection.SqlLiteConnectionString);
+            return new SqlLiteDbUnitTest(DbConnections.SqlLiteConnectionString);
         }
 
         protected override string GetXmlFilename()

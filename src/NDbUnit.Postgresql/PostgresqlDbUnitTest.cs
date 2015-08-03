@@ -23,6 +23,7 @@
 using NDbUnit.Core;
 using Npgsql;
 using System.Data;
+using System.Data.Common;
 
 namespace NDbUnit.Postgresql
 {
@@ -38,7 +39,7 @@ namespace NDbUnit.Postgresql
         {
         }
 
-        protected override IDbDataAdapter CreateDataAdapter(IDbCommand command)
+        protected override DbDataAdapter CreateDataAdapter(DbCommand command)
         {
             var oda = new NpgsqlDataAdapter();
             oda.SelectCommand = (NpgsqlCommand)command;

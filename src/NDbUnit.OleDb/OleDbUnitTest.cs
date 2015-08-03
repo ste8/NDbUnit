@@ -46,7 +46,7 @@ namespace NDbUnit.Core.OleDb
         /// </summary>
         /// <param name="connectionString">The connection string 
         /// used to open the database.
-        /// <seealso cref="System.Data.IDbConnection"/></param>
+        /// <seealso cref="System.Data.DbConnection"/></param>
 
         public OleDbUnitTest(OleDbConnection connection)
             : base(connection)
@@ -75,7 +75,7 @@ namespace NDbUnit.Core.OleDb
             }
         }
 
-        protected override IDbDataAdapter CreateDataAdapter(IDbCommand command)
+        protected override DbDataAdapter CreateDataAdapter(DbCommand command)
         {
             return new OleDbDataAdapter((OleDbCommand)command);
         }

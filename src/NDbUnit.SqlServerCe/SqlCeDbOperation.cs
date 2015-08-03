@@ -36,12 +36,12 @@ namespace NDbUnit.Core.SqlServerCe
             get { return "]"; }
         }
 
-        protected override IDbDataAdapter CreateDbDataAdapter()
+        protected override DbDataAdapter CreateDbDataAdapter()
         {
             return new SqlCeDataAdapter();
         }
 
-        protected override IDbCommand CreateDbCommand(string cmdText)
+        protected override DbCommand CreateDbCommand(string cmdText)
         {
             return new SqlCeCommand(cmdText);
         }

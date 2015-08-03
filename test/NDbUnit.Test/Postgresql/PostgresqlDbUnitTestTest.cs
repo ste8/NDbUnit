@@ -25,6 +25,7 @@ using System.IO;
 using NDbUnit.Postgresql;
 using Npgsql;
 using NUnit.Framework;
+using System.Data.Common;
 
 namespace NDbUnit.Test.Postgresql
 {
@@ -45,7 +46,7 @@ namespace NDbUnit.Test.Postgresql
 
         protected override IUnitTestStub GetUnitTestStub()
         {
-            return new PostgresqlDbUnitTestStub(DbConnection.PostgresqlConnectionString);
+            return new PostgresqlDbUnitTestStub(DbConnections.PostgresqlConnectionString);
         }
 
         protected override string GetXmlFilename()
@@ -75,7 +76,7 @@ namespace NDbUnit.Test.Postgresql
                 return _mockDbOperation;
             }
 
-            protected override IDbDataAdapter CreateDataAdapter(IDbCommand command)
+            protected override DbDataAdapter CreateDataAdapter(DbCommand command)
             {
                 return base.CreateDataAdapter(command);
             }

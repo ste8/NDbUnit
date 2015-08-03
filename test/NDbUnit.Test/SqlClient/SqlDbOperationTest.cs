@@ -24,6 +24,7 @@ using System.Data;
 using System.Data.SqlClient;
 using NDbUnit.Core;
 using NUnit.Framework;
+using System.Data.Common;
 
 namespace NDbUnit.Test.SqlClient
 {
@@ -33,7 +34,7 @@ namespace NDbUnit.Test.SqlClient
     {
         protected override NDbUnit.Core.IDbCommandBuilder GetCommandBuilder()
         {
-            return new SqlDbCommandBuilder(new DbConnectionManager<SqlConnection>(DbConnection.SqlConnectionString));
+            return new SqlDbCommandBuilder(new DbConnectionManager<SqlConnection>(DbConnections.SqlConnectionString));
         }
 
         protected override NDbUnit.Core.IDbOperation GetDbOperation()
@@ -41,7 +42,7 @@ namespace NDbUnit.Test.SqlClient
             return new SqlDbOperation();
         }
 
-        protected override IDbCommand GetResetIdentityColumnsDbCommand(DataTable table, DataColumn column)
+        protected override DbCommand GetResetIdentityColumnsDbCommand(DataTable table, DataColumn column)
         {
             String sql = String.Format("dbcc checkident([{0}], RESEED, 0)", table.TableName);
             return new SqlCommand(sql, (SqlConnection)_commandBuilder.Connection);

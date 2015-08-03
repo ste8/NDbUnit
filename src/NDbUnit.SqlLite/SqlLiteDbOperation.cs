@@ -27,12 +27,12 @@ namespace NDbUnit.Core.SqlLite
 {
     public class SqlLiteDbOperation : DbOperation
     {
-        protected override IDbDataAdapter CreateDbDataAdapter()
+        protected override DbDataAdapter CreateDbDataAdapter()
         {
             return new SQLiteDataAdapter();
         }
 
-        protected override IDbCommand CreateDbCommand(string cmdText)
+        protected override DbCommand CreateDbCommand(string cmdText)
         {
             return new SQLiteCommand(cmdText);
         }
@@ -43,7 +43,7 @@ namespace NDbUnit.Core.SqlLite
         /// <param name="dataTable"></param>
         /// <param name="dbCommand"></param>
         /// <param name="dbTransaction"></param>
-        protected override void OnInsertIdentity(DataTable dataTable, IDbCommand dbCommand, IDbTransaction dbTransaction)
+        protected override void OnInsertIdentity(DataTable dataTable, DbCommand dbCommand, DbTransaction dbTransaction)
         {
             OnInsert(dataTable, dbCommand, dbTransaction);
         }
@@ -53,7 +53,7 @@ namespace NDbUnit.Core.SqlLite
         /// </summary>
         /// <param name="dataSet">The <see cref="DataSet"/> containing all the tables where the constraints must be disabled</param>
         /// <param name="transaction">The transaction used while processing data with disabled constraints</param>
-        protected override void DisableAllTableConstraints(DataSet dataSet, IDbTransaction transaction)
+        protected override void DisableAllTableConstraints(DataSet dataSet, DbTransaction transaction)
         {
             using (var sqlCommand = (SQLiteCommand)CreateDbCommand("PRAGMA ignore_check_constraints = true"))
             {
@@ -68,7 +68,7 @@ namespace NDbUnit.Core.SqlLite
         /// </summary>
         /// <param name="dataSet">The <see cref="DataSet"/> containing all the tables where the constraints must be enabled</param>
         /// <param name="transaction">The transaction used while processing data with enabled constraints</param>
-        protected override void EnableAllTableConstraints(DataSet dataSet, IDbTransaction transaction)
+        protected override void EnableAllTableConstraints(DataSet dataSet, DbTransaction transaction)
         {
             using (var sqlCommand = (SQLiteCommand)CreateDbCommand("PRAGMA ignore_check_constraints = false"))
             {
@@ -84,7 +84,7 @@ namespace NDbUnit.Core.SqlLite
         /// <param name="dataTable">The table for which the constraints must be disabled</param>
         /// <param name="dbTransaction">The transaction used while processing data with disabled constraints</param>
         /// <exception cref="NotSupportedException">This method isn't supported for SQLite</exception>
-        protected override void DisableTableConstraints(DataTable dataTable, IDbTransaction dbTransaction)
+        protected override void DisableTableConstraints(DataTable dataTable, DbTransaction dbTransaction)
         {
             throw new NotSupportedException();
         }
@@ -95,7 +95,7 @@ namespace NDbUnit.Core.SqlLite
         /// <param name="dataTable">The table for which the constraints must be enabled</param>
         /// <param name="dbTransaction">The transaction used while processing data with enabled constraints</param>
         /// <exception cref="NotSupportedException">This method isn't supported for SQLite</exception>
-        protected override void EnableTableConstraints(DataTable dataTable, IDbTransaction dbTransaction)
+        protected override void EnableTableConstraints(DataTable dataTable, DbTransaction dbTransaction)
         {
             throw new NotSupportedException();
         }

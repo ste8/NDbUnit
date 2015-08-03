@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Data;
+using System.Data.Common;
 using System.Data.Odbc;
 
 namespace NDbUnit.Core
 {
-    public class DbConnectionManager<TDbConnection> where TDbConnection : class, IDbConnection, new()
+    public class DbConnectionManager<TDbConnection> where TDbConnection : DbConnection, new()
     {
         private TDbConnection _connection;
         private readonly string _connectionString;

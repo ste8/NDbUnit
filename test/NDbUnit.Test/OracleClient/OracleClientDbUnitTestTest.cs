@@ -28,6 +28,7 @@ using System.Data;
 using System.IO;
 using NUnit.Framework;
 using Oracle.DataAccess.Client;
+using System.Data.Common;
 
 namespace NDbUnit.Test.OracleClient
 {
@@ -47,7 +48,7 @@ namespace NDbUnit.Test.OracleClient
 
         protected override IUnitTestStub GetUnitTestStub()
         {
-            return new OracleClientDbUnitTestStub(DbConnection.OracleClientConnectionString);
+            return new OracleClientDbUnitTestStub(DbConnections.OracleClientConnectionString);
         }
 
         protected override string GetXmlFilename()
@@ -77,7 +78,7 @@ namespace NDbUnit.Test.OracleClient
                 return _mockDbOperation;
             }
 
-            protected override IDbDataAdapter CreateDataAdapter(IDbCommand command)
+            protected override DbDataAdapter CreateDataAdapter(DbCommand command)
             {
                 return base.CreateDataAdapter(command);
             }

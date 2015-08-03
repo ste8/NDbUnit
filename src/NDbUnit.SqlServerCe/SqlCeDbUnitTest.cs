@@ -37,7 +37,7 @@ namespace NDbUnit.Core.SqlServerCe
         {
         }
 
-        protected override IDbDataAdapter CreateDataAdapter(IDbCommand command)
+        protected override DbDataAdapter CreateDataAdapter(DbCommand command)
         {
             return new SqlCeDataAdapter((SqlCeCommand)command);
         }

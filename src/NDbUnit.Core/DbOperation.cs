@@ -31,35 +31,35 @@ namespace NDbUnit.Core
 
         public virtual string QuoteSuffix { get { return ""; } }
 
-        public void Delete(DataSet ds, IDbCommandBuilder dbCommandBuilder, IDbTransaction dbTransaction)
+        public void Delete(DataSet ds, IDbCommandBuilder dbCommandBuilder, DbTransaction dbTransaction)
         {
             DisableAllTableConstraints(ds, dbTransaction);
             deleteCommon(ds, dbCommandBuilder, dbTransaction, false);
             EnableAllTableConstraints(ds, dbTransaction);
         }
 
-        public void DeleteAll(DataSet ds, IDbCommandBuilder dbCommandBuilder, IDbTransaction dbTransaction)
+        public void DeleteAll(DataSet ds, IDbCommandBuilder dbCommandBuilder, DbTransaction dbTransaction)
         {
             DisableAllTableConstraints(ds, dbTransaction);
             deleteCommon(ds, dbCommandBuilder, dbTransaction, true);
             EnableAllTableConstraints(ds, dbTransaction);
         }
 
-        public void Insert(DataSet ds, IDbCommandBuilder dbCommandBuilder, IDbTransaction dbTransaction)
+        public void Insert(DataSet ds, IDbCommandBuilder dbCommandBuilder, DbTransaction dbTransaction)
         {
             DisableAllTableConstraints(ds, dbTransaction);
             insertCommon(ds, dbCommandBuilder, dbTransaction, false);
             EnableAllTableConstraints(ds, dbTransaction);
         }
 
-        public void InsertIdentity(DataSet ds, IDbCommandBuilder dbCommandBuilder, IDbTransaction dbTransaction)
+        public void InsertIdentity(DataSet ds, IDbCommandBuilder dbCommandBuilder, DbTransaction dbTransaction)
         {
             DisableAllTableConstraints(ds, dbTransaction);
             insertCommon(ds, dbCommandBuilder, dbTransaction, true);
             EnableAllTableConstraints(ds, dbTransaction);
         }
 
-        public void Refresh(DataSet ds, IDbCommandBuilder dbCommandBuilder, IDbTransaction dbTransaction)
+        public void Refresh(DataSet ds, IDbCommandBuilder dbCommandBuilder, DbTransaction dbTransaction)
         {
 
             DataSetTableIterator iterator = new DataSetTableIterator(ds, false);
@@ -74,7 +74,7 @@ namespace NDbUnit.Core
             EnableAllTableConstraints(ds, dbTransaction);
         }
 
-        public void Update(DataSet ds, IDbCommandBuilder dbCommandBuilder, IDbTransaction dbTransaction)
+        public void Update(DataSet ds, IDbCommandBuilder dbCommandBuilder, DbTransaction dbTransaction)
         {
             DataSet dsCopy = ds.Copy();
             dsCopy.AcceptChanges();
@@ -109,16 +109,16 @@ namespace NDbUnit.Core
             return dataRowClone;
         }
 
-        protected abstract IDbCommand CreateDbCommand(string cmdText);
+        protected abstract DbCommand CreateDbCommand(string cmdText);
 
-        protected abstract IDbDataAdapter CreateDbDataAdapter();
+        protected abstract DbDataAdapter CreateDbDataAdapter();
 
         /// <summary>
         /// Disable the constraints for the whole database
         /// </summary>
         /// <param name="dataSet">The <see cref="DataSet"/> containing all the tables where the constraints must be disabled</param>
         /// <param name="transaction">The transaction used while processing data with disabled constraints</param>
-        protected virtual void DisableAllTableConstraints(DataSet dataSet, IDbTransaction transaction)
+        protected virtual void DisableAllTableConstraints(DataSet dataSet, DbTransaction transaction)
         {
             foreach (DataTable table in dataSet.Tables)
             {
@@ -131,7 +131,7 @@ namespace NDbUnit.Core
         /// </summary>
         /// <param name="dataSet">The <see cref="DataSet"/> containing all the tables where the constraints must be enabled</param>
         /// <param name="transaction">The transaction used while processing data with enabled constraints</param>
-        protected virtual void EnableAllTableConstraints(DataSet dataSet, IDbTransaction transaction)
+        protected virtual void EnableAllTableConstraints(DataSet dataSet, DbTransaction transaction)
         {
             foreach (DataTable table in dataSet.Tables)
             {
@@ -144,7 +144,7 @@ namespace NDbUnit.Core
         /// </summary>
         /// <param name="dataTable">The table for which the constraints must be disabled</param>
         /// <param name="dbTransaction">The transaction used while processing data with disabled constraints</param>
-        protected virtual void DisableTableConstraints(DataTable dataTable, IDbTransaction dbTransaction)
+        protected virtual void DisableTableConstraints(DataTable dataTable, DbTransaction dbTransaction)
         {
             //base class implementation does NOTHING in this method, derived classes must override as needed
         }
@@ -154,7 +154,7 @@ namespace NDbUnit.Core
         /// </summary>
         /// <param name="dataTable">The table for which the constraints must be enabled</param>
         /// <param name="dbTransaction">The transaction used while processing data with enabled constraints</param>
-        protected virtual void EnableTableConstraints(DataTable dataTable, IDbTransaction dbTransaction)
+        protected virtual void EnableTableConstraints(DataTable dataTable, DbTransaction dbTransaction)
         {
             //base class implementation does NOTHING in this method, derived classes must override as needed
         }
@@ -179,11 +179,11 @@ namespace NDbUnit.Core
             return true;
         }
 
-        protected virtual void OnDelete(DataTable dataTable, IDbCommand dbCommand, IDbTransaction dbTransaction)
+        protected virtual void OnDelete(DataTable dataTable, DbCommand dbCommand, DbTransaction dbTransaction)
         {
-            IDbTransaction sqlTransaction = dbTransaction;
+            DbTransaction sqlTransaction = dbTransaction;
 
-            IDbDataAdapter sqlDataAdapter = CreateDbDataAdapter();
+            DbDataAdapter sqlDataAdapter = CreateDbDataAdapter();
             try
             {
                 sqlDataAdapter.DeleteCommand = dbCommand;
@@ -200,24 +200,24 @@ namespace NDbUnit.Core
             }
         }
 
-        protected virtual void OnDeleteAll(IDbCommand dbCommand, IDbTransaction dbTransaction)
+        protected virtual void OnDeleteAll(DbCommand dbCommand, DbTransaction dbTransaction)
         {
-            IDbTransaction sqlTransaction = dbTransaction;
+            DbTransaction sqlTransaction = dbTransaction;
 
-            IDbCommand sqlCommand = dbCommand;
+            DbCommand sqlCommand = dbCommand;
             sqlCommand.Connection = sqlTransaction.Connection;
             sqlCommand.Transaction = sqlTransaction;
 
             sqlCommand.ExecuteNonQuery();
         }
 
-        protected virtual void OnInsert(DataTable dataTable, IDbCommand dbCommand, IDbTransaction dbTransaction)
+        protected virtual void OnInsert(DataTable dataTable, DbCommand dbCommand, DbTransaction dbTransaction)
         {
-            IDbTransaction sqlTransaction = dbTransaction;
+            DbTransaction sqlTransaction = dbTransaction;
 
             //DisableTableConstraints(dataTable, dbTransaction);
 
-            IDbDataAdapter sqlDataAdapter = CreateDbDataAdapter();
+            DbDataAdapter sqlDataAdapter = CreateDbDataAdapter();
             try
             {
                 sqlDataAdapter.InsertCommand = dbCommand;
@@ -236,9 +236,9 @@ namespace NDbUnit.Core
             //EnableTableConstraints(dataTable, dbTransaction);
         }
 
-        protected virtual void OnInsertIdentity(DataTable dataTable, IDbCommand dbCommand, IDbTransaction dbTransaction)
+        protected virtual void OnInsertIdentity(DataTable dataTable, DbCommand dbCommand, DbTransaction dbTransaction)
         {
-            IDbTransaction sqlTransaction = dbTransaction;
+            DbTransaction sqlTransaction = dbTransaction;
 
             //DisableTableConstraints(dataTable, dbTransaction);
 
@@ -247,7 +247,7 @@ namespace NDbUnit.Core
                 if (column.AutoIncrement)
                 {
                     // Set identity insert on.
-                    using (IDbCommand sqlCommand =
+                    using (DbCommand sqlCommand =
                         CreateDbCommand(
                             "SET IDENTITY_INSERT " +
                             TableNameHelper.FormatTableName(dataTable.TableName, QuotePrefix, QuoteSuffix) +
@@ -263,7 +263,7 @@ namespace NDbUnit.Core
 
             try
             {
-                IDbDataAdapter sqlDataAdapter = CreateDbDataAdapter();
+                DbDataAdapter sqlDataAdapter = CreateDbDataAdapter();
                 try
                 {
                     sqlDataAdapter.InsertCommand = dbCommand;
@@ -287,7 +287,7 @@ namespace NDbUnit.Core
                     if (column.AutoIncrement)
                     {
                         // Set identity insert off.
-                        IDbCommand sqlCommand =
+                        DbCommand sqlCommand =
                             CreateDbCommand("SET IDENTITY_INSERT " +
                                             TableNameHelper.FormatTableName(dataTable.TableName, QuotePrefix,
                                                                             QuoteSuffix) + " OFF");
@@ -303,11 +303,11 @@ namespace NDbUnit.Core
             }
         }
 
-        protected virtual void OnRefresh(DataSet ds, IDbCommandBuilder dbCommandBuilder, IDbTransaction dbTransaction, string tableName)
+        protected virtual void OnRefresh(DataSet ds, IDbCommandBuilder dbCommandBuilder, DbTransaction dbTransaction, string tableName)
         {
-            IDbTransaction sqlTransaction = dbTransaction;
+            DbTransaction sqlTransaction = dbTransaction;
 
-            IDbDataAdapter sqlDataAdapter = CreateDbDataAdapter();
+            DbDataAdapter sqlDataAdapter = CreateDbDataAdapter();
             try
             {
                 using (var selectCommand = dbCommandBuilder.GetSelectCommand(tableName))
@@ -383,13 +383,13 @@ namespace NDbUnit.Core
             }
         }
 
-        protected virtual void OnUpdate(DataSet ds, IDbCommandBuilder dbCommandBuilder, IDbTransaction dbTransaction, string tableName)
+        protected virtual void OnUpdate(DataSet ds, IDbCommandBuilder dbCommandBuilder, DbTransaction dbTransaction, string tableName)
         {
-            IDbTransaction sqlTransaction = dbTransaction;
+            DbTransaction sqlTransaction = dbTransaction;
 
             //DisableTableConstraints(ds.Tables[tableName], dbTransaction);
 
-            IDbDataAdapter sqlDataAdapter = CreateDbDataAdapter();
+            DbDataAdapter sqlDataAdapter = CreateDbDataAdapter();
             try
             {
                 using (var updateCommand = dbCommandBuilder.GetUpdateCommand(tableName))
@@ -411,7 +411,7 @@ namespace NDbUnit.Core
             //EnableTableConstraints(ds.Tables[tableName], dbTransaction);
         }
 
-        private void deleteCommon(DataSet ds, IDbCommandBuilder dbCommandBuilder, IDbTransaction dbTransaction,
+        private void deleteCommon(DataSet ds, IDbCommandBuilder dbCommandBuilder, DbTransaction dbTransaction,
                                           bool deleteAll)
         {
             Hashtable deletedTableColl = new Hashtable();
@@ -427,7 +427,7 @@ namespace NDbUnit.Core
         }
 
         private void deleteRecursive(DataSet ds, DataTable dataTableSchema, IDbCommandBuilder dbCommandBuilder,
-                                             IDbTransaction dbTransaction, Hashtable deletedTableColl, bool deleteAll)
+                                             DbTransaction dbTransaction, Hashtable deletedTableColl, bool deleteAll)
         {
             // Table has already been deleted from.
             if (deletedTableColl.ContainsKey(dataTableSchema.TableName))
@@ -453,7 +453,7 @@ namespace NDbUnit.Core
 
             if (deleteAll)
             {
-                using (IDbCommand dbCommand = dbCommandBuilder.GetDeleteAllCommand(dataTableSchema.TableName))
+                using (DbCommand dbCommand = dbCommandBuilder.GetDeleteAllCommand(dataTableSchema.TableName))
                 {
                     try
                     {
@@ -477,7 +477,7 @@ namespace NDbUnit.Core
                     dataRow.Delete();
                 }
 
-                using (IDbCommand dbCommand = dbCommandBuilder.GetDeleteCommand(dataTableSchema.TableName))
+                using (DbCommand dbCommand = dbCommandBuilder.GetDeleteCommand(dataTableSchema.TableName))
                 {
                     try
                     {
@@ -491,7 +491,7 @@ namespace NDbUnit.Core
             }
         }
 
-        private void insertCommon(DataSet ds, IDbCommandBuilder dbCommandBuilder, IDbTransaction dbTransaction,
+        private void insertCommon(DataSet ds, IDbCommandBuilder dbCommandBuilder, DbTransaction dbTransaction,
                                           bool insertIdentity)
         {
             Hashtable insertedTableColl = new Hashtable();
@@ -507,7 +507,7 @@ namespace NDbUnit.Core
         }
 
         private void insertRecursive(DataSet ds, DataTable dataTableSchema, IDbCommandBuilder dbCommandBuilder,
-                                             IDbTransaction dbTransaction, Hashtable insertedTableColl, bool insertIdentity)
+                                             DbTransaction dbTransaction, Hashtable insertedTableColl, bool insertIdentity)
         {
             // Table has already been inserted into.
             if (insertedTableColl.ContainsKey(dataTableSchema.TableName))
@@ -557,14 +557,14 @@ namespace NDbUnit.Core
 
             if (insertIdentity)
             {
-                using (IDbCommand dbCommand = dbCommandBuilder.GetInsertIdentityCommand(dataTableSchema.TableName))
+                using (DbCommand dbCommand = dbCommandBuilder.GetInsertIdentityCommand(dataTableSchema.TableName))
                 {
                     OnInsertIdentity(dataTableClone, dbCommand, dbTransaction);
                 }
             }
             else
             {
-                using (IDbCommand dbCommand = dbCommandBuilder.GetInsertCommand(dataTableSchema.TableName))
+                using (DbCommand dbCommand = dbCommandBuilder.GetInsertCommand(dataTableSchema.TableName))
                 {
                     OnInsert(dataTableClone, dbCommand, dbTransaction);
                 }

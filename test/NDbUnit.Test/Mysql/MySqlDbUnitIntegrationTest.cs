@@ -29,7 +29,7 @@ namespace NDbUnit.Test.Mysql
     {
         protected override INDbUnitTest GetNDbUnitTest()
         {
-            return new MySqlDbUnitTest(DbConnection.MySqlConnectionString);
+            return new MySqlDbUnitTest(DbConnections.MySqlConnectionString);
         }
 
         protected override string GetXmlFilename()

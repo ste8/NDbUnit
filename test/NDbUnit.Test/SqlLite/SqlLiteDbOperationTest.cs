@@ -24,6 +24,7 @@ using System.Data;
 using System.Data.SQLite;
 using NDbUnit.Core;
 using NUnit.Framework;
+using System.Data.Common;
 
 namespace NDbUnit.Test.SqlLite
 {
@@ -33,7 +34,7 @@ namespace NDbUnit.Test.SqlLite
     {
         protected override IDbCommandBuilder GetCommandBuilder()
         {
-            return new SqlLiteDbCommandBuilder(new DbConnectionManager<SQLiteConnection>(DbConnection.SqlLiteConnectionString));
+            return new SqlLiteDbCommandBuilder(new DbConnectionManager<SQLiteConnection>(DbConnections.SqlLiteConnectionString));
         }
 
         protected override NDbUnit.Core.IDbOperation GetDbOperation()
@@ -41,7 +42,7 @@ namespace NDbUnit.Test.SqlLite
             return new SqlLiteDbOperation();
         }
 
-        protected override IDbCommand GetResetIdentityColumnsDbCommand(DataTable table, DataColumn column)
+        protected override DbCommand GetResetIdentityColumnsDbCommand(DataTable table, DataColumn column)
         {
             String sql = String.Format("delete from sqlite_sequence where name = '{0}'", table.TableName);
             return new SQLiteCommand(sql, (SQLiteConnection)_commandBuilder.Connection);

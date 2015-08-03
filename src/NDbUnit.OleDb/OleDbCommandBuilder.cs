@@ -42,7 +42,7 @@ namespace NDbUnit.Core.OleDb
             get { return "]"; }
         }
 
-        protected override IDbCommand CreateDbCommand()
+        protected override DbCommand CreateDbCommand()
         {
             OleDbCommand command = new OleDbCommand();
 
@@ -58,7 +58,7 @@ namespace NDbUnit.Core.OleDb
                                       (int)dataRow["ColumnSize"], (string)dataRow["ColumnName"]);
         }
 
-        protected override IDbCommand CreateUpdateCommand(IDbCommand selectCommand, string tableName)
+        protected override DbCommand CreateUpdateCommand(DbCommand selectCommand, string tableName)
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("UPDATE " + TableNameHelper.FormatTableName(tableName, QuotePrefix, QuoteSuffix) + " SET ");
@@ -139,7 +139,7 @@ namespace NDbUnit.Core.OleDb
             return oleDbUpdateCommand;
         }
 
-        protected override IDbConnection GetConnection(string connectionString)
+        protected override DbConnection GetConnection(string connectionString)
         {
             return new OleDbConnection(connectionString);
         }

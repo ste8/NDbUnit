@@ -30,7 +30,7 @@ namespace NDbUnit.Test.Postgresql
     {
         protected override INDbUnitTest GetNDbUnitTest()
         {
-            return new PostgresqlDbUnitTest(DbConnection.PostgresqlConnectionString);
+            return new PostgresqlDbUnitTest(DbConnections.PostgresqlConnectionString);
         }
 
         protected override string GetXmlFilename()

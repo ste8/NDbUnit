@@ -122,7 +122,7 @@ namespace NDbUnit.Test.SqlClient
 
         protected override IDisposableDbCommandBuilder GetDbCommandBuilder()
         {
-            var connectionManager = new DbConnectionManager<MySqlConnection>(DbConnection.MySqlConnectionString);
+            var connectionManager = new DbConnectionManager<MySqlConnection>(DbConnections.MySqlConnectionString);
             return new DisposableDbCommandBuilder<MySqlConnection>(connectionManager, new MySqlDbCommandBuilder(connectionManager));
         }
 

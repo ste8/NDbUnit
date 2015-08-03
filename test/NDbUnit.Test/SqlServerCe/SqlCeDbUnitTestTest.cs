@@ -25,6 +25,7 @@ using System.Data;
 using System.Data.SqlServerCe;
 using System.IO;
 using NUnit.Framework;
+using System.Data.Common;
 
 namespace NDbUnit.Test.SqlServerCe
 {
@@ -45,7 +46,7 @@ namespace NDbUnit.Test.SqlServerCe
 
         protected override IUnitTestStub GetUnitTestStub()
         {
-            return new SqlCeDbUnitTestStub(DbConnection.SqlCeConnectionString);
+            return new SqlCeDbUnitTestStub(DbConnections.SqlCeConnectionString);
         }
 
         protected override string GetXmlFilename()
@@ -75,7 +76,7 @@ namespace NDbUnit.Test.SqlServerCe
                 return _mockDbOperation;
             }
 
-            protected override IDbDataAdapter CreateDataAdapter(IDbCommand command)
+            protected override DbDataAdapter CreateDataAdapter(DbCommand command)
             {
                 return base.CreateDataAdapter(command);
             }

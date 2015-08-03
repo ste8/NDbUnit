@@ -122,7 +122,7 @@ namespace NDbUnit.Test.OracleClient
 
         protected override IDisposableDbCommandBuilder GetDbCommandBuilder()
         {
-            var connectionManager = new DbConnectionManager<OracleConnection>(DbConnection.OracleClientConnectionString);
+            var connectionManager = new DbConnectionManager<OracleConnection>(DbConnections.OracleClientConnectionString);
             return new DisposableDbCommandBuilder<OracleConnection>(connectionManager, new OracleClientDbCommandBuilder(connectionManager));
         }
 

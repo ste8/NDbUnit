@@ -20,6 +20,7 @@
 
 using System;
 using System.Data;
+using System.Data.Common;
 using System.Text;
 using NDbUnit.Core;
 using Oracle.DataAccess.Client;
@@ -43,13 +44,13 @@ namespace NDbUnit.OracleClient
             get { return QuotePrefix; }
         }
 
-        protected override IDbCommand CreateDbCommand()
+        protected override DbCommand CreateDbCommand()
         {
             OracleCommand command = new OracleCommand();
             return command;
         }
 
-        protected override IDbCommand CreateInsertCommand(IDbCommand selectCommand, string tableName)
+        protected override DbCommand CreateInsertCommand(DbCommand selectCommand, string tableName)
         {
             int count = 1;
             bool notFirstColumn = false;
@@ -57,7 +58,7 @@ namespace NDbUnit.OracleClient
             sb.Append(String.Format("INSERT INTO {0}(", TableNameHelper.FormatTableName(tableName, QuotePrefix, QuoteSuffix)));
             StringBuilder sbParam = new StringBuilder();
             IDataParameter sqlParameter;
-            IDbCommand sqlInsertCommand = CreateDbCommand();
+            DbCommand sqlInsertCommand = CreateDbCommand();
             foreach (DataRow dataRow in _dataTableSchema.Rows)
             {
                 if (notFirstColumn)
@@ -85,28 +86,28 @@ namespace NDbUnit.OracleClient
             return sqlInsertCommand;
         }
 
-        protected override IDbCommand CreateUpdateCommand(IDbCommand selectCommand, string tableName)
+        protected override DbCommand CreateUpdateCommand(DbCommand selectCommand, string tableName)
         {
             var command = base.CreateUpdateCommand(selectCommand, tableName);
             ((OracleCommand) command).BindByName = true;
             return command;
         }
 
-        protected override IDbCommand CreateInsertIdentityCommand(IDbCommand selectCommand, string tableName)
+        protected override DbCommand CreateInsertIdentityCommand(DbCommand selectCommand, string tableName)
         {
             var command = base.CreateInsertIdentityCommand(selectCommand, tableName);
             ((OracleCommand)command).BindByName = true;
             return command;
         }
 
-        protected override IDbCommand CreateDeleteCommand(IDbCommand selectCommand, string tableName)
+        protected override DbCommand CreateDeleteCommand(DbCommand selectCommand, string tableName)
         {
             var command = base.CreateDeleteCommand(selectCommand, tableName);
             ((OracleCommand)command).BindByName = true;
             return command;
         }
 
-        protected override IDbCommand CreateSelectCommand(DataSet ds, string tableName)
+        protected override DbCommand CreateSelectCommand(DataSet ds, string tableName)
         {
             var command = base.CreateSelectCommand(ds, tableName);
             ((OracleCommand)command).BindByName = true;
@@ -119,7 +120,7 @@ namespace NDbUnit.OracleClient
                                       (int)dataRow["ColumnSize"], (string)dataRow["ColumnName"]);
         }
 
-        protected override IDbConnection GetConnection(string connectionString)
+        protected override DbConnection GetConnection(string connectionString)
         {
             return new OracleConnection(connectionString);
         }

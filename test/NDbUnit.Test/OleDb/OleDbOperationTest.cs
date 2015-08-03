@@ -24,6 +24,7 @@ using NDbUnit.Core.OleDb;
 using System.Data.OleDb;
 using NDbUnit.Core;
 using NUnit.Framework;
+using System.Data.Common;
 
 namespace NDbUnit.Test.OleDb
 {
@@ -33,7 +34,7 @@ namespace NDbUnit.Test.OleDb
     {
         protected override NDbUnit.Core.IDbCommandBuilder GetCommandBuilder()
         {
-            return new NDbUnit.Core.OleDb.OleDbCommandBuilder(new DbConnectionManager<OleDbConnection>(DbConnection.OleDbConnectionString));
+            return new NDbUnit.Core.OleDb.OleDbCommandBuilder(new DbConnectionManager<OleDbConnection>(DbConnections.OleDbConnectionString));
         }
 
         protected override NDbUnit.Core.IDbOperation GetDbOperation()
@@ -41,7 +42,7 @@ namespace NDbUnit.Test.OleDb
             return new OleDbOperation();
         }
 
-        protected override IDbCommand GetResetIdentityColumnsDbCommand(DataTable table, DataColumn column)
+        protected override DbCommand GetResetIdentityColumnsDbCommand(DataTable table, DataColumn column)
         {
             String sql = "dbcc checkident([" + table.TableName + "], RESEED, 0)";
             return new OleDbCommand(sql, (OleDbConnection)_commandBuilder.Connection);

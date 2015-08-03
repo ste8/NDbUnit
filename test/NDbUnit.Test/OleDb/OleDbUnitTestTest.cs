@@ -25,6 +25,7 @@ using System.Data.OleDb;
 using System.IO;
 using NDbUnit.Core.OleDb;
 using NUnit.Framework;
+using System.Data.Common;
 
 namespace NDbUnit.Test.OleDb
 {
@@ -45,7 +46,7 @@ namespace NDbUnit.Test.OleDb
 
         protected override IUnitTestStub GetUnitTestStub()
         {
-            return new OleDbUnitTestStub(DbConnection.OleDbConnectionString);
+            return new OleDbUnitTestStub(DbConnections.OleDbConnectionString);
         }
 
         protected override string GetXmlFilename()
@@ -75,7 +76,7 @@ namespace NDbUnit.Test.OleDb
                 return _mockDbOperation;
             }
 
-            protected override IDbDataAdapter CreateDataAdapter(IDbCommand command)
+            protected override DbDataAdapter CreateDataAdapter(DbCommand command)
             {
                 return base.CreateDataAdapter(command);
             }

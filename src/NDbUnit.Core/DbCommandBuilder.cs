@@ -23,10 +23,11 @@ using System.IO;
 using System.Text;
 using System.Data;
 using System.Collections;
+using System.Data.Common;
 
 namespace NDbUnit.Core
 {
-    public abstract class DbCommandBuilder<TDbConnection> : IDbCommandBuilder where TDbConnection: class, IDbConnection, new()
+    public abstract class DbCommandBuilder<TDbConnection> : IDbCommandBuilder where TDbConnection: DbConnection, new()
     {
         private DataSet _dataSet = new DataSet();
 
@@ -38,7 +39,7 @@ namespace NDbUnit.Core
 
         //private bool _passedconnection;
 
-        //protected IDbConnection _sqlConnection;
+        //protected DbConnection _sqlConnection;
 
         protected DbConnectionManager<TDbConnection> ConnectionManager; 
 
@@ -49,7 +50,7 @@ namespace NDbUnit.Core
             ConnectionManager = connectionManager;
         }
 
-        //protected DbCommandBuilder(IDbConnection connection)
+        //protected DbCommandBuilder(DbConnection connection)
         //{
         //    _passedconnection = true;
         //    _sqlConnection = connection;
@@ -62,7 +63,7 @@ namespace NDbUnit.Core
 
         public int CommandTimeOutSeconds { get; set; }
 
-        public IDbConnection Connection
+        public DbConnection Connection
         {
             get { return ConnectionManager.GetConnection(); }
         }
@@ -153,25 +154,25 @@ namespace NDbUnit.Core
             _initialized = true;
         }
 
-        public IDbCommand GetDeleteAllCommand(string tableName)
+        public DbCommand GetDeleteAllCommand(string tableName)
         {
             isInitialized();
             return ((Commands)_dbCommandColl[tableName]).CreateDeleteAllCommand();
         }
 
-        public IDbCommand GetDeleteCommand(string tableName)
+        public DbCommand GetDeleteCommand(string tableName)
         {
             isInitialized();
             return ((Commands)_dbCommandColl[tableName]).CreateDeleteCommand();
         }
 
-        public IDbCommand GetInsertCommand(string tableName)
+        public DbCommand GetInsertCommand(string tableName)
         {
             isInitialized();
             return ((Commands)_dbCommandColl[tableName]).CreateInsertCommand();
         }
 
-        public IDbCommand GetInsertIdentityCommand(string tableName)
+        public DbCommand GetInsertIdentityCommand(string tableName)
         {
             isInitialized();
             return ((Commands)_dbCommandColl[tableName]).CreateInsertIdentityCommand();
@@ -188,13 +189,13 @@ namespace NDbUnit.Core
             return _dataSet;
         }
 
-        public IDbCommand GetSelectCommand(string tableName)
+        public DbCommand GetSelectCommand(string tableName)
         {
             isInitialized();
             return ((Commands)_dbCommandColl[tableName]).CreateSelectCommand();
         }
 
-        public IDbCommand GetUpdateCommand(string tableName)
+        public DbCommand GetUpdateCommand(string tableName)
         {
             isInitialized();
             return ((Commands)_dbCommandColl[tableName]).CreateUpdateCommand();
@@ -231,21 +232,21 @@ namespace NDbUnit.Core
             }
         }
 
-        protected abstract IDbCommand CreateDbCommand();
+        protected abstract DbCommand CreateDbCommand();
 
-        protected virtual IDbCommand CreateDeleteAllCommand(string tableName)
+        protected virtual DbCommand CreateDeleteAllCommand(string tableName)
         {
-            IDbCommand command = CreateDbCommand();
+            DbCommand command = CreateDbCommand();
             command.CommandText = String.Format("DELETE FROM {0}", TableNameHelper.FormatTableName(tableName, QuotePrefix, QuoteSuffix));
             return command;
         }
 
-        protected virtual IDbCommand CreateDeleteCommand(IDbCommand selectCommand, string tableName)
+        protected virtual DbCommand CreateDeleteCommand(DbCommand selectCommand, string tableName)
         {
             StringBuilder sb = new StringBuilder();
             sb.Append(String.Format("DELETE FROM {0} WHERE ", TableNameHelper.FormatTableName(tableName, QuotePrefix, QuoteSuffix)));
 
-            IDbCommand sqlDeleteCommand = CreateDbCommand();
+            DbCommand sqlDeleteCommand = CreateDbCommand();
 
             int count = 1;
             foreach (DataRow dataRow in _dataTableSchema.Rows)
@@ -273,7 +274,7 @@ namespace NDbUnit.Core
             return sqlDeleteCommand;
         }
 
-        protected virtual IDbCommand CreateInsertCommand(IDbCommand selectCommand, string tableName)
+        protected virtual DbCommand CreateInsertCommand(DbCommand selectCommand, string tableName)
         {
             int count = 1;
             bool notFirstColumn = false;
@@ -281,7 +282,7 @@ namespace NDbUnit.Core
             sb.Append(String.Format("INSERT INTO {0}(", TableNameHelper.FormatTableName(tableName, QuotePrefix, QuoteSuffix)));
             StringBuilder sbParam = new StringBuilder();
             IDataParameter sqlParameter;
-            IDbCommand sqlInsertCommand = CreateDbCommand();
+            DbCommand sqlInsertCommand = CreateDbCommand();
             foreach (DataRow dataRow in _dataTableSchema.Rows)
             {
                 if (ColumnOKToInclude(dataRow))
@@ -315,7 +316,7 @@ namespace NDbUnit.Core
             return sqlInsertCommand;
         }
 
-        protected virtual IDbCommand CreateInsertIdentityCommand(IDbCommand selectCommand, string tableName)
+        protected virtual DbCommand CreateInsertIdentityCommand(DbCommand selectCommand, string tableName)
         {
             int count = 1;
             bool notFirstColumn = false;
@@ -323,7 +324,7 @@ namespace NDbUnit.Core
             sb.Append(String.Format("INSERT INTO {0}(", TableNameHelper.FormatTableName(tableName, QuotePrefix, QuoteSuffix)));
             StringBuilder sbParam = new StringBuilder();
             IDataParameter sqlParameter;
-            IDbCommand sqlInsertIdentityCommand = CreateDbCommand();
+            DbCommand sqlInsertIdentityCommand = CreateDbCommand();
             foreach (DataRow dataRow in _dataTableSchema.Rows)
             {
                 if (ColumnOKToInclude(dataRow))
@@ -356,9 +357,9 @@ namespace NDbUnit.Core
 
         protected abstract IDataParameter CreateNewSqlParameter(int index, DataRow dataRow);
 
-        protected virtual IDbCommand CreateSelectCommand(DataSet ds, string tableName)
+        protected virtual DbCommand CreateSelectCommand(DataSet ds, string tableName)
         {
-            IDbCommand sqlSelectCommand = CreateDbCommand();
+            DbCommand sqlSelectCommand = CreateDbCommand();
 
             bool notFirstColumn = false;
             StringBuilder sb = new StringBuilder("SELECT ");
@@ -397,12 +398,12 @@ namespace NDbUnit.Core
             return sqlSelectCommand;
         }
 
-        protected virtual IDbCommand CreateUpdateCommand(IDbCommand selectCommand, string tableName)
+        protected virtual DbCommand CreateUpdateCommand(DbCommand selectCommand, string tableName)
         {
             StringBuilder sb = new StringBuilder();
             sb.Append(String.Format("UPDATE {0} SET ", TableNameHelper.FormatTableName(tableName, QuotePrefix, QuoteSuffix)));
 
-            IDbCommand sqlUpdateCommand = CreateDbCommand();
+            DbCommand sqlUpdateCommand = CreateDbCommand();
 
             int count = 1;
             bool notFirstKey = false;
@@ -471,7 +472,7 @@ namespace NDbUnit.Core
             return sqlUpdateCommand;
         }
 
-        protected abstract IDbConnection GetConnection(string connectionString);
+        protected abstract DbConnection GetConnection(string connectionString);
 
         protected virtual string GetIdentityColumnDesignator()
         {
@@ -483,8 +484,8 @@ namespace NDbUnit.Core
             return String.Format("@p{0}", count);
         }
 
-        //private DataTable GetSchemaTable(IDbCommand sqlSelectCommand)
-        protected virtual DataTable GetSchemaTable(IDbCommand sqlSelectCommand)
+        //private DataTable GetSchemaTable(DbCommand sqlSelectCommand)
+        protected virtual DataTable GetSchemaTable(DbCommand sqlSelectCommand)
         {
             DataTable dataTableSchema = new DataTable();
 
@@ -534,12 +535,12 @@ namespace NDbUnit.Core
 
         private class Commands
         {
-            public Func<IDbCommand> CreateSelectCommand;
-            public Func<IDbCommand> CreateInsertCommand;
-            public Func<IDbCommand> CreateInsertIdentityCommand;
-            public Func<IDbCommand> CreateDeleteCommand;
-            public Func<IDbCommand> CreateDeleteAllCommand;
-            public Func<IDbCommand> CreateUpdateCommand;
+            public Func<DbCommand> CreateSelectCommand;
+            public Func<DbCommand> CreateInsertCommand;
+            public Func<DbCommand> CreateInsertIdentityCommand;
+            public Func<DbCommand> CreateDeleteCommand;
+            public Func<DbCommand> CreateDeleteAllCommand;
+            public Func<DbCommand> CreateUpdateCommand;
         }
 
     }

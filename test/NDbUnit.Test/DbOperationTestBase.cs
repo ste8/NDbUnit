@@ -23,6 +23,7 @@ using System.Data;
 using NDbUnit.Core;
 using System.IO;
 using NUnit.Framework;
+using System.Data.Common;
 
 namespace NDbUnit.Test.Common
 {
@@ -251,7 +252,7 @@ namespace NDbUnit.Test.Common
 
         protected abstract IDbOperation GetDbOperation();
 
-        protected abstract IDbCommand GetResetIdentityColumnsDbCommand(DataTable table, DataColumn column);
+        protected abstract DbCommand GetResetIdentityColumnsDbCommand(DataTable table, DataColumn column);
 
         protected abstract string GetXmlFilename();
 
@@ -263,7 +264,7 @@ namespace NDbUnit.Test.Common
 
         protected void ResetIdentityColumns()
         {
-            IDbTransaction sqlTransaction = null;
+            DbTransaction sqlTransaction = null;
             try
             {
                 DataSet dsSchema = _commandBuilder.GetSchema();
@@ -274,11 +275,11 @@ namespace NDbUnit.Test.Common
                     {
                         if (column.AutoIncrement)
                         {
-                            using (IDbCommand sqlCommand = GetResetIdentityColumnsDbCommand(table, column))
+                            using (DbCommand sqlCommand = GetResetIdentityColumnsDbCommand(table, column))
                             {
                                 if (sqlCommand != null)
                                 {
-                                    sqlCommand.Transaction = (IDbTransaction)sqlTransaction;
+                                    sqlCommand.Transaction = sqlTransaction;
                                     sqlCommand.ExecuteNonQuery();
                                 }
                             }

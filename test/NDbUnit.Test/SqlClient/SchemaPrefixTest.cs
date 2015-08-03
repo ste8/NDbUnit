@@ -12,7 +12,7 @@ namespace NDbUnit.Test.SqlClient
         {
             try
             {
-                var db = new NDbUnit.Core.SqlClient.SqlDbUnitTest(DbConnection.SqlConnectionString);
+                var db = new NDbUnit.Core.SqlClient.SqlDbUnitTest(DbConnections.SqlConnectionString);
                 db.ReadXmlSchema(XmlTestFiles.SqlServer.XmlSchemaFileForSchemaPrefixTests);
                 db.ReadXml(XmlTestFiles.SqlServer.XmlFileForSchemaPrefixTests);
 

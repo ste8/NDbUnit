@@ -26,6 +26,7 @@ using System.Data;
 using NDbUnit.Core;
 using Npgsql;
 using NpgsqlTypes;
+using System.Data.Common;
 
 namespace NDbUnit.Postgresql
 {
@@ -46,13 +47,13 @@ namespace NDbUnit.Postgresql
             get { return QuotePrefix; }
         }
 
-        protected override IDbCommand CreateDbCommand()
+        protected override DbCommand CreateDbCommand()
         {
             NpgsqlCommand command = new NpgsqlCommand();
             return command;
         }
 
-        protected override IDbCommand CreateInsertCommand(IDbCommand selectCommand, string tableName)
+        protected override DbCommand CreateInsertCommand(DbCommand selectCommand, string tableName)
         {
             int count = 1;
             bool notFirstColumn = false;
@@ -60,7 +61,7 @@ namespace NDbUnit.Postgresql
             sb.Append(String.Format("INSERT INTO {0}(", TableNameHelper.FormatTableName(tableName, QuotePrefix, QuoteSuffix)));
             StringBuilder sbParam = new StringBuilder();
             IDataParameter sqlParameter;
-            IDbCommand sqlInsertCommand = CreateDbCommand();
+            DbCommand sqlInsertCommand = CreateDbCommand();
             foreach (DataRow dataRow in _dataTableSchema.Rows)
             {
                 if (notFirstColumn)
@@ -99,7 +100,7 @@ namespace NDbUnit.Postgresql
                        };
         }
 
-        protected override IDbConnection GetConnection(string connectionString)
+        protected override DbConnection GetConnection(string connectionString)
         {
             return new NpgsqlConnection(connectionString);
         }

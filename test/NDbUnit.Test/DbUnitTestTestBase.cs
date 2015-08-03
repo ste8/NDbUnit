@@ -27,6 +27,7 @@ using Rhino.Mocks;
 using Is = Rhino.Mocks.Constraints.Is;
 using AssertIs = NUnit.Framework.Is;
 using System.Collections.Generic;
+using System.Data.Common;
 
 namespace NDbUnit.Test.Common
 {
@@ -35,7 +36,7 @@ namespace NDbUnit.Test.Common
     {
         private const int EXPECTED_COUNT_OF_COMMANDS = 3;
 
-        protected IDbConnection _mockConnection;
+        protected DbConnection _mockConnection;
 
         protected static FileStream _mockDataFileStream;
 
@@ -47,7 +48,7 @@ namespace NDbUnit.Test.Common
 
         protected static FileStream _mockSchemaFileStream;
 
-        protected IDbTransaction _mockTransaction;
+        protected DbTransaction _mockTransaction;
 
         protected IUnitTestStub _nDbUnitTestStub;
 
@@ -68,8 +69,8 @@ namespace NDbUnit.Test.Common
             _mockDbCommandBuilder = _mocker.CreateMock<IDbCommandBuilder>();
             _mockDbOperation = _mocker.CreateMock<IDbOperation>();
             _nDbUnitTestStub = GetUnitTestStub();
-            _mockConnection = _mocker.CreateMock<IDbConnection>();
-            _mockTransaction = _mocker.CreateMock<IDbTransaction>();
+            _mockConnection = _mocker.CreateMock<DbConnection>();
+            _mockTransaction = _mocker.CreateMock<DbTransaction>();
         }
 
         [TearDown]
