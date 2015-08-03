@@ -29,7 +29,7 @@ using System.Reflection;
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyCopyright("Copyright ©  2005-2015 Stephen Bohlen")]
 [assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("en-US")]	
+[assembly: AssemblyCulture("")]	
 
 //
 // Version information for an assembly consists of the following four values:
