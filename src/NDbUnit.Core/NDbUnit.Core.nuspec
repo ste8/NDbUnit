@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package>
+	<metadata>
+		<id>$id$</id>
+		<version>$version$</version>
+    <title>.NET 4.0 NDbUnit Core Services</title>
+    <authors>Stephen Bohlen</authors>
+		<description>.NET 4.0 NDbUnit Core Services; not intended to be consumed by itself</description>
+		<language>en-US</language>
+		<projectUrl>https://github.com/NDbUnit/NDbUnit/</projectUrl>
+		<licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+		<tags>unittest test database net40</tags>
+	</metadata>
+</package>

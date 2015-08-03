@@ -13,7 +13,7 @@ GOTO :EOF
 
 :ALL
 CALL :ENSUREOUTPUTPATHEXISTS
-for /f %%F in ('dir /b *.nuspec') DO CALL :INVOKE %%F
+for /f %%F in ('dir /b /s ..\*.nuspec') DO CALL :INVOKE %%F
 GOTO :EOF
 
 :USAGE

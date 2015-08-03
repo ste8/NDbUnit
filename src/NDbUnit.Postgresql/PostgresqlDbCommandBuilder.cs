@@ -1,8 +1,8 @@
 /*
  *
  * NDbUnit
- * Copyright (C)2005 - 2010
- * http://code.google.com/p/ndbunit
+ * Copyright (C) 2005 - 2015
+ * https://github.com/NDbUnit/NDbUnit
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public

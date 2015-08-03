@@ -1,4 +1,4 @@
-ï»¿/*
+/*
  *
  * NDbUnit
  * Copyright (C) 2005 - 2015
@@ -20,9 +20,28 @@
 
 using System.Reflection;
 
+//
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("NDbUnit.MySql")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyProduct("NDbUnit.MySql")]
+//
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyCopyright("Copyright ©  2005-2015 Stephen Bohlen")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("en-US")]	
+
+//
+// Version information for an assembly consists of the following four values:
+//
+//      Major Version
+//      Minor Version 
+//      Build Number
+//      Revision
+//
+// You can specify all the values or you can default the Revision and Build Numbers 
+// by using the '*' as shown below:
+
+[assembly: AssemblyVersion("1.6.0")]
+[assembly: AssemblyFileVersion("1.6.9")]
+[assembly: AssemblyInformationalVersion("1.6.9")]

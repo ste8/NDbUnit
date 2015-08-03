@@ -66,6 +66,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\GlobalAssemblyInfo.cs">
+      <Link>Properties\GlobalAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="MySqlDbCommandBuilder.cs" />
     <Compile Include="MySqlDbOperation.cs" />
     <Compile Include="MySqlDbUnitTest.cs" />
@@ -98,6 +101,7 @@
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="NDbUnit.MySql.nuspec" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

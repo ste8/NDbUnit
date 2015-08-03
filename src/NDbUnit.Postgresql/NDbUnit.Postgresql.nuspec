@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package>
+	<metadata>
+		<id>$id$</id>
+		<version>$version$</version>
+    <title>.NET 4.0 NDbUnit for Postgresql targets</title>
+    <authors>Stephen Bohlen</authors>
+		<description>.NET 4.0 NDbUnit for Postgresql targets; NDbUnit is a framework for managing database state during data-dependent unit tests</description>
+		<language>en-US</language>
+		<projectUrl>https://github.com/NDbUnit/NDbUnit/</projectUrl>
+		<licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+		<tags>unittest test database Postgresql</tags>
+		<dependencies>
+			<dependency id="NDbUnit.Core" version="$version$" />
+		</dependencies> 		
+	</metadata>
+</package>

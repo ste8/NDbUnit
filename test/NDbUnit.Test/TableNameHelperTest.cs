@@ -1,8 +1,8 @@
 ﻿/*
  *
  * NDbUnit
- * Copyright (C)2005 - 2011
- * http://code.google.com/p/ndbunit
+ * Copyright (C) 2005 - 2015
+ * https://github.com/NDbUnit/NDbUnit
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
