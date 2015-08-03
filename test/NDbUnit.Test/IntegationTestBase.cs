@@ -43,7 +43,7 @@ namespace NDbUnit.Test
                 database.PerformDbOperation(DbOperationFlag.InsertIdentity);
                 database.PerformDbOperation(DbOperationFlag.DeleteAll);
 
-                DataSet actualDataSet = database.GetDataSetFromDb();
+                DataSet actualDataSet = database.GetDataSetFromDb(null);
 
                 Assert.That(actualDataSet.HasTheSameDataAs(expectedDataSet));
             }
@@ -63,7 +63,7 @@ namespace NDbUnit.Test
                 database.PerformDbOperation(DbOperationFlag.DeleteAll);
                 database.PerformDbOperation(DbOperationFlag.InsertIdentity);
 
-                DataSet actualDataSet = database.GetDataSetFromDb();
+                DataSet actualDataSet = database.GetDataSetFromDb(null);
 
                 Assert.That(actualDataSet.HasTheSameDataAs(expectedDataSet));
             }
@@ -86,7 +86,7 @@ namespace NDbUnit.Test
                 database.ReadXml(GetXmlRefreshFilename());
                 database.PerformDbOperation(DbOperationFlag.Refresh);
 
-                DataSet actualDataSet = database.GetDataSetFromDb();
+                DataSet actualDataSet = database.GetDataSetFromDb(null);
 
                 Assert.That(actualDataSet.HasTheSameDataAs(expectedDataSet));
             }
@@ -109,7 +109,7 @@ namespace NDbUnit.Test
                 database.ReadXml(GetXmlModFilename());
                 database.PerformDbOperation(DbOperationFlag.Update);
 
-                DataSet actualDataSet = database.GetDataSetFromDb();
+                DataSet actualDataSet = database.GetDataSetFromDb(null);
 
                 Assert.That(actualDataSet.HasTheSameDataAs(expectedDataSet));
             }

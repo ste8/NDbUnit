@@ -60,13 +60,13 @@ namespace NDbUnit.Core.SqlLite
             return command;
         }
 
-        protected override DbCommand CreateDeleteAllCommand(string tableName)
+        protected override DbCommand CreateDeleteAllCommand(DbTransaction transaction, string tableName)
         {
             return
                 new SQLiteCommand("DELETE FROM " + TableNameHelper.FormatTableName(tableName, QuotePrefix, QuoteSuffix));
         }
 
-        protected override DbCommand CreateDeleteCommand(DbCommand selectCommand, string tableName)
+        protected override DbCommand CreateDeleteCommand(DbTransaction transaction, DbCommand selectCommand, string tableName)
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("DELETE FROM " + TableNameHelper.FormatTableName(tableName, QuotePrefix, QuoteSuffix) + " WHERE ");
@@ -103,7 +103,7 @@ namespace NDbUnit.Core.SqlLite
             return sqlDeleteCommand;
         }
 
-        protected override DbCommand CreateInsertCommand(DbCommand selectCommand, string tableName)
+        protected override DbCommand CreateInsertCommand(DbTransaction transaction, DbCommand selectCommand, string tableName)
         {
             int count = 1;
             bool notFirstColumn = false;
@@ -145,7 +145,7 @@ namespace NDbUnit.Core.SqlLite
             return sqlInsertCommand;
         }
 
-        protected override DbCommand CreateInsertIdentityCommand(DbCommand selectCommand, string tableName)
+        protected override DbCommand CreateInsertIdentityCommand(DbTransaction transaction, DbCommand selectCommand, string tableName)
         {
             int count = 1;
             bool notFirstColumn = false;
@@ -191,7 +191,7 @@ namespace NDbUnit.Core.SqlLite
                                        (string)dataRow[SchemaColumns.ColumnName]);
         }
 
-        protected override DbCommand CreateSelectCommand(DataSet ds, string tableName)
+        protected override DbCommand CreateSelectCommand(DbTransaction transaction, DataSet ds, string tableName)
         {
             SQLiteCommand sqlSelectCommand = CreateDbCommand() as SQLiteCommand;
 
@@ -232,7 +232,7 @@ namespace NDbUnit.Core.SqlLite
             return sqlSelectCommand;
         }
 
-        protected override DbCommand CreateUpdateCommand(DbCommand selectCommand, string tableName)
+        protected override DbCommand CreateUpdateCommand(DbTransaction transaction, DbCommand selectCommand, string tableName)
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("UPDATE " + TableNameHelper.FormatTableName(tableName, QuotePrefix, QuoteSuffix) + " SET ");

@@ -142,7 +142,7 @@ namespace NDbUnit.Core
                 connection.Close();
         }
 
-        public DataSet GetDataSetFromDb(StringCollection tableNames)
+        public DataSet GetDataSetFromDb(StringCollection tableNames, DbTransaction dbTransaction)
         {
             checkInitialized();
 
@@ -166,7 +166,7 @@ namespace NDbUnit.Core
 
                 foreach (string tableName in tableNames)
                 {
-                    OnGetDataSetFromDb(tableName, ref dsToFill, dbConnection);
+                    OnGetDataSetFromDb(tableName, ref dsToFill, dbConnection, dbTransaction);
                 }
 
                 dsToFill.EnforceConstraints = true;
@@ -182,9 +182,9 @@ namespace NDbUnit.Core
             }
         }
 
-        public DataSet GetDataSetFromDb()
+        public DataSet GetDataSetFromDb(DbTransaction dbTransaction)
         {
-            return GetDataSetFromDb(null);
+            return GetDataSetFromDb(null, dbTransaction);
         }
 
         public void PerformDbOperation(DbOperationFlag dbOperationFlag)
@@ -398,20 +398,24 @@ namespace NDbUnit.Core
             return new FileStream(xmlSchemaFile, FileMode.Open, FileAccess.Read, FileShare.Read);
         }
 
-        protected virtual void OnGetDataSetFromDb(string tableName, ref DataSet dsToFill, DbConnection dbConnection)
+        protected virtual void OnGetDataSetFromDb(string tableName, ref DataSet dsToFill, DbConnection dbConnection, DbTransaction dbTransaction)
         {
-            DbCommand selectCommand = GetDbCommandBuilder().GetSelectCommand(tableName);
-            selectCommand.Connection = dbConnection;
-            DbDataAdapter adapter = CreateDataAdapter(selectCommand);
-            try
+            using (DbCommand selectCommand = GetDbCommandBuilder().GetSelectCommand(dbTransaction, tableName))
             {
-                ((DbDataAdapter)adapter).Fill(dsToFill, tableName);
-            }
-            finally
-            {
-                var disposable = adapter as IDisposable;
-                if (disposable != null)
-                    disposable.Dispose();
+                selectCommand.Connection = dbConnection;
+                if (dbTransaction != null)
+                    selectCommand.Transaction = dbTransaction;
+                DbDataAdapter adapter = CreateDataAdapter(selectCommand);
+                try
+                {
+                    adapter.Fill(dsToFill, tableName);
+                }
+                finally
+                {
+                    var disposable = adapter as IDisposable;
+                    if (disposable != null)
+                        disposable.Dispose();
+                }
             }
         }
 

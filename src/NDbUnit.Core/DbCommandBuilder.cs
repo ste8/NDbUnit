@@ -116,34 +116,34 @@ namespace NDbUnit.Core
             {
                 // Virtual overrides.
                 var commands = new Commands();
-                commands.CreateSelectCommand = () => CreateSelectCommand(_dataSet, dataTable.TableName);
-                commands.CreateInsertCommand = () =>
+                commands.CreateSelectCommand = (trans) => CreateSelectCommand(trans, _dataSet, dataTable.TableName);
+                commands.CreateInsertCommand = (trans) =>
                 {
-                    using (var selectCommand = commands.CreateSelectCommand())
+                    using (var selectCommand = commands.CreateSelectCommand(trans))
                     {
-                        return CreateInsertCommand(selectCommand, dataTable.TableName);
+                        return CreateInsertCommand(trans, selectCommand, dataTable.TableName);
                     }
                 };
-                commands.CreateInsertIdentityCommand = () =>
+                commands.CreateInsertIdentityCommand = (trans) =>
                 {
-                    using (var selectCommand = commands.CreateSelectCommand())
+                    using (var selectCommand = commands.CreateSelectCommand(trans))
                     {
-                        return CreateInsertIdentityCommand(selectCommand, dataTable.TableName);
+                        return CreateInsertIdentityCommand(trans, selectCommand, dataTable.TableName);
                     }
                 };
-                commands.CreateDeleteCommand = () =>
+                commands.CreateDeleteCommand = (trans) =>
                 {
-                    using (var selectCommand = commands.CreateSelectCommand())
+                    using (var selectCommand = commands.CreateSelectCommand(trans))
                     {
-                        return CreateDeleteCommand(selectCommand, dataTable.TableName);
+                        return CreateDeleteCommand(trans, selectCommand, dataTable.TableName);
                     }
                 };
-                commands.CreateDeleteAllCommand = () => CreateDeleteAllCommand(dataTable.TableName);
-                commands.CreateUpdateCommand = () =>
+                commands.CreateDeleteAllCommand = (trans) => CreateDeleteAllCommand(trans, dataTable.TableName);
+                commands.CreateUpdateCommand = (trans) =>
                 {
-                    using (var selectCommand = commands.CreateSelectCommand())
+                    using (var selectCommand = commands.CreateSelectCommand(trans))
                     {
-                        return CreateUpdateCommand(selectCommand, dataTable.TableName);
+                        return CreateUpdateCommand(trans, selectCommand, dataTable.TableName);
                     }
                 };
 
@@ -154,28 +154,28 @@ namespace NDbUnit.Core
             _initialized = true;
         }
 
-        public DbCommand GetDeleteAllCommand(string tableName)
+        public DbCommand GetDeleteAllCommand(DbTransaction transaction, string tableName)
         {
             isInitialized();
-            return ((Commands)_dbCommandColl[tableName]).CreateDeleteAllCommand();
+            return ((Commands)_dbCommandColl[tableName]).CreateDeleteAllCommand(transaction);
         }
 
-        public DbCommand GetDeleteCommand(string tableName)
+        public DbCommand GetDeleteCommand(DbTransaction transaction, string tableName)
         {
             isInitialized();
-            return ((Commands)_dbCommandColl[tableName]).CreateDeleteCommand();
+            return ((Commands)_dbCommandColl[tableName]).CreateDeleteCommand(transaction);
         }
 
-        public DbCommand GetInsertCommand(string tableName)
+        public DbCommand GetInsertCommand(DbTransaction transaction, string tableName)
         {
             isInitialized();
-            return ((Commands)_dbCommandColl[tableName]).CreateInsertCommand();
+            return ((Commands)_dbCommandColl[tableName]).CreateInsertCommand(transaction);
         }
 
-        public DbCommand GetInsertIdentityCommand(string tableName)
+        public DbCommand GetInsertIdentityCommand(DbTransaction transaction, string tableName)
         {
             isInitialized();
-            return ((Commands)_dbCommandColl[tableName]).CreateInsertIdentityCommand();
+            return ((Commands)_dbCommandColl[tableName]).CreateInsertIdentityCommand(transaction);
         }
 
         public void ReleaseConnection()
@@ -189,16 +189,16 @@ namespace NDbUnit.Core
             return _dataSet;
         }
 
-        public DbCommand GetSelectCommand(string tableName)
+        public DbCommand GetSelectCommand(DbTransaction transaction, string tableName)
         {
             isInitialized();
-            return ((Commands)_dbCommandColl[tableName]).CreateSelectCommand();
+            return ((Commands)_dbCommandColl[tableName]).CreateSelectCommand(transaction);
         }
 
-        public DbCommand GetUpdateCommand(string tableName)
+        public DbCommand GetUpdateCommand(DbTransaction transaction, string tableName)
         {
             isInitialized();
-            return ((Commands)_dbCommandColl[tableName]).CreateUpdateCommand();
+            return ((Commands)_dbCommandColl[tableName]).CreateUpdateCommand(transaction);
         }
 
         protected virtual bool ColumnOKToInclude(DataRow dataRow)
@@ -234,14 +234,14 @@ namespace NDbUnit.Core
 
         protected abstract DbCommand CreateDbCommand();
 
-        protected virtual DbCommand CreateDeleteAllCommand(string tableName)
+        protected virtual DbCommand CreateDeleteAllCommand(DbTransaction transaction, string tableName)
         {
             DbCommand command = CreateDbCommand();
             command.CommandText = String.Format("DELETE FROM {0}", TableNameHelper.FormatTableName(tableName, QuotePrefix, QuoteSuffix));
             return command;
         }
 
-        protected virtual DbCommand CreateDeleteCommand(DbCommand selectCommand, string tableName)
+        protected virtual DbCommand CreateDeleteCommand(DbTransaction transaction, DbCommand selectCommand, string tableName)
         {
             StringBuilder sb = new StringBuilder();
             sb.Append(String.Format("DELETE FROM {0} WHERE ", TableNameHelper.FormatTableName(tableName, QuotePrefix, QuoteSuffix)));
@@ -274,7 +274,7 @@ namespace NDbUnit.Core
             return sqlDeleteCommand;
         }
 
-        protected virtual DbCommand CreateInsertCommand(DbCommand selectCommand, string tableName)
+        protected virtual DbCommand CreateInsertCommand(DbTransaction transaction, DbCommand selectCommand, string tableName)
         {
             int count = 1;
             bool notFirstColumn = false;
@@ -316,7 +316,7 @@ namespace NDbUnit.Core
             return sqlInsertCommand;
         }
 
-        protected virtual DbCommand CreateInsertIdentityCommand(DbCommand selectCommand, string tableName)
+        protected virtual DbCommand CreateInsertIdentityCommand(DbTransaction transaction, DbCommand selectCommand, string tableName)
         {
             int count = 1;
             bool notFirstColumn = false;
@@ -357,7 +357,7 @@ namespace NDbUnit.Core
 
         protected abstract IDataParameter CreateNewSqlParameter(int index, DataRow dataRow);
 
-        protected virtual DbCommand CreateSelectCommand(DataSet ds, string tableName)
+        protected virtual DbCommand CreateSelectCommand(DbTransaction transaction, DataSet ds, string tableName)
         {
             DbCommand sqlSelectCommand = CreateDbCommand();
 
@@ -381,6 +381,8 @@ namespace NDbUnit.Core
 
             sqlSelectCommand.CommandText = sb.ToString();
             sqlSelectCommand.Connection = ConnectionManager.GetConnection();
+            if (transaction != null)
+                sqlSelectCommand.Transaction = transaction;
 
             try
             {
@@ -398,7 +400,7 @@ namespace NDbUnit.Core
             return sqlSelectCommand;
         }
 
-        protected virtual DbCommand CreateUpdateCommand(DbCommand selectCommand, string tableName)
+        protected virtual DbCommand CreateUpdateCommand(DbTransaction transaction, DbCommand selectCommand, string tableName)
         {
             StringBuilder sb = new StringBuilder();
             sb.Append(String.Format("UPDATE {0} SET ", TableNameHelper.FormatTableName(tableName, QuotePrefix, QuoteSuffix)));
@@ -535,12 +537,12 @@ namespace NDbUnit.Core
 
         private class Commands
         {
-            public Func<DbCommand> CreateSelectCommand;
-            public Func<DbCommand> CreateInsertCommand;
-            public Func<DbCommand> CreateInsertIdentityCommand;
-            public Func<DbCommand> CreateDeleteCommand;
-            public Func<DbCommand> CreateDeleteAllCommand;
-            public Func<DbCommand> CreateUpdateCommand;
+            public Func<DbTransaction, DbCommand> CreateSelectCommand;
+            public Func<DbTransaction, DbCommand> CreateInsertCommand;
+            public Func<DbTransaction, DbCommand> CreateInsertIdentityCommand;
+            public Func<DbTransaction, DbCommand> CreateDeleteCommand;
+            public Func<DbTransaction, DbCommand> CreateDeleteAllCommand;
+            public Func<DbTransaction, DbCommand> CreateUpdateCommand;
         }
 
     }

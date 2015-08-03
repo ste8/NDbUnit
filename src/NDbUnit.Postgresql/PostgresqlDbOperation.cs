@@ -94,18 +94,33 @@ namespace NDbUnit.Postgresql
                 {
                     if (column.AutoIncrement)
                     {
-                        DbCommand selectMaxCommand = CreateDbCommand(string.Format("SELECT MAX({0}{2}{1}) FROM {3}", QuotePrefix, QuoteSuffix, column.ColumnName, TableNameHelper.FormatTableName(dataTable.TableName, QuotePrefix, QuoteSuffix)));
-                        selectMaxCommand.Connection = sqlTransaction.Connection;
-                        selectMaxCommand.Transaction = sqlTransaction;
-                        int count = (int)selectMaxCommand.ExecuteScalar();
+                        using (
+                            DbCommand selectMaxCommand =
+                                CreateDbCommand(
+                                    string.Format(
+                                        "SELECT MAX({0}{2}{1}) FROM {3}",
+                                        QuotePrefix,
+                                        QuoteSuffix,
+                                        column.ColumnName,
+                                        TableNameHelper.FormatTableName(dataTable.TableName, QuotePrefix, QuoteSuffix))))
+                        {
+                            selectMaxCommand.Connection = sqlTransaction.Connection;
+                            selectMaxCommand.Transaction = sqlTransaction;
+                            int count = (int)selectMaxCommand.ExecuteScalar();
 
-                        DbCommand sqlCommand =
-                            CreateDbCommand(string.Format("ALTER SEQUENCE \"{0}_{1}_seq\" RESTART WITH {2}",
-                                                          dataTable.TableName, column.ColumnName, count));
-                        sqlCommand.Connection = sqlTransaction.Connection;
-                        sqlCommand.Transaction = sqlTransaction;
-                        sqlCommand.ExecuteNonQuery();
-
+                            using (DbCommand sqlCommand =
+                                CreateDbCommand(
+                                    string.Format(
+                                        "ALTER SEQUENCE \"{0}_{1}_seq\" RESTART WITH {2}",
+                                        dataTable.TableName,
+                                        column.ColumnName,
+                                        count)))
+                            {
+                                sqlCommand.Connection = sqlTransaction.Connection;
+                                sqlCommand.Transaction = sqlTransaction;
+                                sqlCommand.ExecuteNonQuery();
+                            }
+                        }
                         break;
                     }
                 }
@@ -123,13 +138,15 @@ namespace NDbUnit.Postgresql
                 string.Format("ALTER TABLE \"{0}\" {1} TRIGGER ALL",
                               tableName,
                               enableConstraint ? "ENABLE" : "DISABLE");
-            var dbCommand = new NpgsqlCommand
-                                {
-                                    CommandText = queryEnables,
-                                    Connection = (NpgsqlConnection)dbTransaction.Connection,
-                                    Transaction = (NpgsqlTransaction)dbTransaction
-                                };
-            dbCommand.ExecuteNonQuery();
+            using (var dbCommand = new NpgsqlCommand
+            {
+                CommandText = queryEnables,
+                Connection = (NpgsqlConnection)dbTransaction.Connection,
+                Transaction = (NpgsqlTransaction)dbTransaction
+            })
+            {
+                dbCommand.ExecuteNonQuery();
+            }
         }
     }
 }

@@ -58,7 +58,7 @@ namespace NDbUnit.Core.OleDb
                                       (int)dataRow["ColumnSize"], (string)dataRow["ColumnName"]);
         }
 
-        protected override DbCommand CreateUpdateCommand(DbCommand selectCommand, string tableName)
+        protected override DbCommand CreateUpdateCommand(DbTransaction transaction, DbCommand selectCommand, string tableName)
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("UPDATE " + TableNameHelper.FormatTableName(tableName, QuotePrefix, QuoteSuffix) + " SET ");

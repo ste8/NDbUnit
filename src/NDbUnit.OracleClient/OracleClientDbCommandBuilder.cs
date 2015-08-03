@@ -50,7 +50,7 @@ namespace NDbUnit.OracleClient
             return command;
         }
 
-        protected override DbCommand CreateInsertCommand(DbCommand selectCommand, string tableName)
+        protected override DbCommand CreateInsertCommand(DbTransaction transaction, DbCommand selectCommand, string tableName)
         {
             int count = 1;
             bool notFirstColumn = false;
@@ -86,30 +86,30 @@ namespace NDbUnit.OracleClient
             return sqlInsertCommand;
         }
 
-        protected override DbCommand CreateUpdateCommand(DbCommand selectCommand, string tableName)
+        protected override DbCommand CreateUpdateCommand(DbTransaction transaction, DbCommand selectCommand, string tableName)
         {
-            var command = base.CreateUpdateCommand(selectCommand, tableName);
+            var command = base.CreateUpdateCommand(transaction, selectCommand, tableName);
             ((OracleCommand) command).BindByName = true;
             return command;
         }
 
-        protected override DbCommand CreateInsertIdentityCommand(DbCommand selectCommand, string tableName)
+        protected override DbCommand CreateInsertIdentityCommand(DbTransaction transaction, DbCommand selectCommand, string tableName)
         {
-            var command = base.CreateInsertIdentityCommand(selectCommand, tableName);
+            var command = base.CreateInsertIdentityCommand(transaction, selectCommand, tableName);
             ((OracleCommand)command).BindByName = true;
             return command;
         }
 
-        protected override DbCommand CreateDeleteCommand(DbCommand selectCommand, string tableName)
+        protected override DbCommand CreateDeleteCommand(DbTransaction transaction, DbCommand selectCommand, string tableName)
         {
-            var command = base.CreateDeleteCommand(selectCommand, tableName);
+            var command = base.CreateDeleteCommand(transaction, selectCommand, tableName);
             ((OracleCommand)command).BindByName = true;
             return command;
         }
 
-        protected override DbCommand CreateSelectCommand(DataSet ds, string tableName)
+        protected override DbCommand CreateSelectCommand(DbTransaction transaction, DataSet ds, string tableName)
         {
-            var command = base.CreateSelectCommand(ds, tableName);
+            var command = base.CreateSelectCommand(transaction, ds, tableName);
             ((OracleCommand)command).BindByName = true;
             return command;
         }

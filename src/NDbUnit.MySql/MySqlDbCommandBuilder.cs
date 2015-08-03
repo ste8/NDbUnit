@@ -52,7 +52,7 @@ namespace NDbUnit.Core.MySqlClient
 
         }
 
-        protected override DbCommand CreateInsertCommand(DbCommand selectCommand, string tableName)
+        protected override DbCommand CreateInsertCommand(DbTransaction transaction, DbCommand selectCommand, string tableName)
         {
             int count = 1;
             bool notFirstColumn = false;

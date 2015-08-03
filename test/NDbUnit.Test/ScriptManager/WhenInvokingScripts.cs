@@ -7,6 +7,7 @@ namespace NDbUnit.Test.ScriptManager
     public class WhenInvokingScripts
     {
         [Test]
+        [Ignore("The dbunit user cannot create/drop databases.")]
         public void Can_Invoke_Scripts_Successfully()
         {
             //you cannot connect to the DB you're planning to create until AFTER you create it, so you must first connect to

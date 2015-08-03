@@ -80,35 +80,41 @@ namespace NDbUnit.OracleClient
                 + "    WHERE UPPER(table_name) = UPPER(:tabela)"
                 + "    AND constraint_type IN ('C', 'R')";
 
-            dbCommand = new OracleCommand();
-            dbCommand.CommandText = queryEnables;
-            dbCommand.Connection = dbTransaction.Connection;
-            dbCommand.Transaction = dbTransaction;
-
-            dbParam = new OracleParameter();
-            dbParam.ParameterName = "tabela";
-            dbParam.Value = dataTable.TableName;
-            dbParam.DbType = DbType.String;
-            dbCommand.Parameters.Add(dbParam);
-
-            dbReader = dbCommand.ExecuteReader();
-            while (dbReader.Read())
+            using (dbCommand = new OracleCommand())
             {
-                altersList.Add(dbReader.GetString(dbReader.GetOrdinal("alterComm")));
-            }
+                dbCommand.CommandText = queryEnables;
+                dbCommand.Connection = dbTransaction.Connection;
+                dbCommand.Transaction = dbTransaction;
 
-            dbReader.Close();
+                dbParam = new OracleParameter();
+                dbParam.ParameterName = "tabela";
+                dbParam.Value = dataTable.TableName;
+                dbParam.DbType = DbType.String;
+                dbCommand.Parameters.Add(dbParam);
+
+                using (dbReader = dbCommand.ExecuteReader())
+                {
+                    while (dbReader.Read())
+                    {
+                        altersList.Add(dbReader.GetString(dbReader.GetOrdinal("alterComm")));
+                    }
+
+                    dbReader.Close();
+                }
+            }
 
             foreach (String returnedCommand in altersList)
             {
 
                 var escapedCommand = returnedCommand.Replace(" " + dataTable.TableName + " ", TableNameHelper.FormatTableName(dataTable.TableName, QuotePrefix, QuoteSuffix));
 
-                dbCommand = new OracleCommand();
-                dbCommand.CommandText = escapedCommand;
-                dbCommand.Connection = dbTransaction.Connection;
-                dbCommand.Transaction = dbTransaction;
-                dbCommand.ExecuteNonQuery();
+                using (dbCommand = new OracleCommand())
+                {
+                    dbCommand.CommandText = escapedCommand;
+                    dbCommand.Connection = dbTransaction.Connection;
+                    dbCommand.Transaction = dbTransaction;
+                    dbCommand.ExecuteNonQuery();
+                }
             }
         }
 

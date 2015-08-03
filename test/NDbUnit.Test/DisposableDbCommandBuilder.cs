@@ -60,34 +60,34 @@ namespace NDbUnit.Test
             _commandBuilder.BuildCommands(xmlSchema);
         }
 
-        public DbCommand GetSelectCommand(string tableName)
+        public DbCommand GetSelectCommand(DbTransaction transaction, string tableName)
         {
-            return _commandBuilder.GetSelectCommand(tableName);
+            return _commandBuilder.GetSelectCommand(transaction, tableName);
         }
 
-        public DbCommand GetInsertCommand(string tableName)
+        public DbCommand GetInsertCommand(DbTransaction transaction, string tableName)
         {
-            return _commandBuilder.GetInsertCommand(tableName);
+            return _commandBuilder.GetInsertCommand(transaction, tableName);
         }
 
-        public DbCommand GetInsertIdentityCommand(string tableName)
+        public DbCommand GetInsertIdentityCommand(DbTransaction transaction, string tableName)
         {
-            return _commandBuilder.GetInsertIdentityCommand(tableName);
+            return _commandBuilder.GetInsertIdentityCommand(transaction, tableName);
         }
 
-        public DbCommand GetDeleteCommand(string tableName)
+        public DbCommand GetDeleteCommand(DbTransaction transaction, string tableName)
         {
-            return _commandBuilder.GetDeleteCommand(tableName);
+            return _commandBuilder.GetDeleteCommand(transaction, tableName);
         }
 
-        public DbCommand GetDeleteAllCommand(string tableName)
+        public DbCommand GetDeleteAllCommand(DbTransaction transaction, string tableName)
         {
-            return _commandBuilder.GetDeleteAllCommand(tableName);
+            return _commandBuilder.GetDeleteAllCommand(transaction, tableName);
         }
 
-        public DbCommand GetUpdateCommand(string tableName)
+        public DbCommand GetUpdateCommand(DbTransaction transaction, string tableName)
         {
-            return _commandBuilder.GetUpdateCommand(tableName);
+            return _commandBuilder.GetUpdateCommand(transaction, tableName);
         }
 
         /// <summary>

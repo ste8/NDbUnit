@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Specialized;
 using System.Data;
+using System.Data.Common;
 using System.IO;
 
 namespace NDbUnit.Core
@@ -137,7 +138,7 @@ namespace NDbUnit.Core
         /// table names in the xml schema.
         /// </summary>
         /// <exception cref="NDbUnitException" />
-        DataSet GetDataSetFromDb();
+        DataSet GetDataSetFromDb(DbTransaction dbTransaction);
 
         /// <summary>
         /// Gets a data set from the database tables.
@@ -146,7 +147,7 @@ namespace NDbUnit.Core
         /// schema to export. If null, then all table names in the xml 
         /// schema will be exported.</param>
         /// <exception cref="NDbUnitException" />
-        DataSet GetDataSetFromDb(StringCollection tableNames);
+        DataSet GetDataSetFromDb(StringCollection tableNames, DbTransaction dbTransaction);
 
 
         /// <summary>

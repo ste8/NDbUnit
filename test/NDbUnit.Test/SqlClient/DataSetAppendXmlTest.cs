@@ -15,7 +15,7 @@ namespace NDbUnit.Test.SqlClient
 
             db.PerformDbOperation(NDbUnit.Core.DbOperationFlag.CleanInsertIdentity);
 
-            var preAppendDataset = db.GetDataSetFromDb();
+            var preAppendDataset = db.GetDataSetFromDb(null);
 
             Assert.AreEqual(2, preAppendDataset.Tables["dbo.User"].Rows.Count);
             Assert.AreEqual(2, preAppendDataset.Tables["Role"].Rows.Count);
@@ -24,7 +24,7 @@ namespace NDbUnit.Test.SqlClient
 
             db.PerformDbOperation(NDbUnit.Core.DbOperationFlag.CleanInsertIdentity);
 
-            var postAppendDataset = db.GetDataSetFromDb();
+            var postAppendDataset = db.GetDataSetFromDb(null);
 
             Assert.AreEqual(4, postAppendDataset.Tables["dbo.User"].Rows.Count);
             Assert.AreEqual(4, postAppendDataset.Tables["Role"].Rows.Count);

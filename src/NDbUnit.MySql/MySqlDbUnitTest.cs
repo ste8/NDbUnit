@@ -68,9 +68,9 @@ namespace NDbUnit.Core.MySqlClient
             return new MySqlDbOperation();
         }
 
-        protected override void OnGetDataSetFromDb(string tableName, ref DataSet dsToFill, DbConnection dbConnection)
+        protected override void OnGetDataSetFromDb(string tableName, ref DataSet dsToFill, DbConnection dbConnection, DbTransaction transaction)
         {
-            MySqlCommand selectCommand = (MySqlCommand)GetDbCommandBuilder().GetSelectCommand(tableName);
+            MySqlCommand selectCommand = (MySqlCommand)GetDbCommandBuilder().GetSelectCommand(transaction, tableName);
             selectCommand.Connection = dbConnection as MySqlConnection;
             using (MySqlDataAdapter adapter = new MySqlDataAdapter(selectCommand))
             {

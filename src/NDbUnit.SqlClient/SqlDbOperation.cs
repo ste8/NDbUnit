@@ -48,24 +48,30 @@ namespace NDbUnit.Core.SqlClient
 
         protected override void EnableTableConstraints(DataTable dataTable, DbTransaction dbTransaction)
         {
-            DbCommand sqlCommand =
-                    CreateDbCommand("ALTER TABLE " +
-                                    TableNameHelper.FormatTableName(dataTable.TableName, QuotePrefix, QuoteSuffix) +
-                                    " CHECK CONSTRAINT ALL");
-            sqlCommand.Connection = dbTransaction.Connection;
-            sqlCommand.Transaction = dbTransaction;
-            sqlCommand.ExecuteNonQuery();
+            using (DbCommand sqlCommand =
+                CreateDbCommand(
+                    "ALTER TABLE " +
+                    TableNameHelper.FormatTableName(dataTable.TableName, QuotePrefix, QuoteSuffix) +
+                    " CHECK CONSTRAINT ALL"))
+            {
+                sqlCommand.Connection = dbTransaction.Connection;
+                sqlCommand.Transaction = dbTransaction;
+                sqlCommand.ExecuteNonQuery();
+            }
         }
 
         protected override void DisableTableConstraints(DataTable dataTable, DbTransaction dbTransaction)
         {
-            DbCommand sqlCommand =
-                    CreateDbCommand("ALTER TABLE " +
-                                    TableNameHelper.FormatTableName(dataTable.TableName, QuotePrefix, QuoteSuffix) +
-                                    " NOCHECK CONSTRAINT ALL");
-            sqlCommand.Connection = dbTransaction.Connection;
-            sqlCommand.Transaction = dbTransaction;
-            sqlCommand.ExecuteNonQuery();
+            using (DbCommand sqlCommand =
+                CreateDbCommand(
+                    "ALTER TABLE " +
+                    TableNameHelper.FormatTableName(dataTable.TableName, QuotePrefix, QuoteSuffix) +
+                    " NOCHECK CONSTRAINT ALL"))
+            {
+                sqlCommand.Connection = dbTransaction.Connection;
+                sqlCommand.Transaction = dbTransaction;
+                sqlCommand.ExecuteNonQuery();
+            }
         }
     }
 }

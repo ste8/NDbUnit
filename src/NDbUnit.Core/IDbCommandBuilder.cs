@@ -46,11 +46,11 @@ namespace NDbUnit.Core
         DataSet GetSchema();
         void BuildCommands(string xmlSchemaFile);
         void BuildCommands(Stream xmlSchema);
-        DbCommand GetSelectCommand(string tableName);
-        DbCommand GetInsertCommand(string tableName);
-        DbCommand GetInsertIdentityCommand(string tableName);
-        DbCommand GetDeleteCommand(string tableName);
-        DbCommand GetDeleteAllCommand(string tableName);
-        DbCommand GetUpdateCommand(string tableName);
+        DbCommand GetSelectCommand(DbTransaction transaction, string tableName);
+        DbCommand GetInsertCommand(DbTransaction transaction, string tableName);
+        DbCommand GetInsertIdentityCommand(DbTransaction transaction, string tableName);
+        DbCommand GetDeleteCommand(DbTransaction transaction, string tableName);
+        DbCommand GetDeleteAllCommand(DbTransaction transaction, string tableName);
+        DbCommand GetUpdateCommand(DbTransaction transaction, string tableName);
     }
 }

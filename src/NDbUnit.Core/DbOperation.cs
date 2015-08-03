@@ -310,7 +310,7 @@ namespace NDbUnit.Core
             DbDataAdapter sqlDataAdapter = CreateDbDataAdapter();
             try
             {
-                using (var selectCommand = dbCommandBuilder.GetSelectCommand(tableName))
+                using (var selectCommand = dbCommandBuilder.GetSelectCommand(dbTransaction, tableName))
                 {
                     selectCommand.Connection = sqlTransaction.Connection;
                     selectCommand.Transaction = sqlTransaction;
@@ -354,13 +354,13 @@ namespace NDbUnit.Core
                     }
 
                     // Does not insert identity.
-                    using (var insertCommand = dbCommandBuilder.GetInsertCommand(tableName))
+                    using (var insertCommand = dbCommandBuilder.GetInsertCommand(dbTransaction, tableName))
                     {
                         insertCommand.Connection = sqlTransaction.Connection;
                         insertCommand.Transaction = sqlTransaction;
                         sqlDataAdapter.InsertCommand = insertCommand;
 
-                        using (var updateCommand = dbCommandBuilder.GetUpdateCommand(tableName))
+                        using (var updateCommand = dbCommandBuilder.GetUpdateCommand(dbTransaction, tableName))
                         {
                             updateCommand.Connection = sqlTransaction.Connection;
                             updateCommand.Transaction = sqlTransaction;
@@ -392,7 +392,7 @@ namespace NDbUnit.Core
             DbDataAdapter sqlDataAdapter = CreateDbDataAdapter();
             try
             {
-                using (var updateCommand = dbCommandBuilder.GetUpdateCommand(tableName))
+                using (var updateCommand = dbCommandBuilder.GetUpdateCommand(dbTransaction, tableName))
                 {
                     updateCommand.Connection = sqlTransaction.Connection;
                     updateCommand.Transaction = sqlTransaction;
@@ -453,7 +453,7 @@ namespace NDbUnit.Core
 
             if (deleteAll)
             {
-                using (DbCommand dbCommand = dbCommandBuilder.GetDeleteAllCommand(dataTableSchema.TableName))
+                using (DbCommand dbCommand = dbCommandBuilder.GetDeleteAllCommand(dbTransaction, dataTableSchema.TableName))
                 {
                     try
                     {
@@ -477,7 +477,7 @@ namespace NDbUnit.Core
                     dataRow.Delete();
                 }
 
-                using (DbCommand dbCommand = dbCommandBuilder.GetDeleteCommand(dataTableSchema.TableName))
+                using (DbCommand dbCommand = dbCommandBuilder.GetDeleteCommand(dbTransaction, dataTableSchema.TableName))
                 {
                     try
                     {
@@ -557,14 +557,14 @@ namespace NDbUnit.Core
 
             if (insertIdentity)
             {
-                using (DbCommand dbCommand = dbCommandBuilder.GetInsertIdentityCommand(dataTableSchema.TableName))
+                using (DbCommand dbCommand = dbCommandBuilder.GetInsertIdentityCommand(dbTransaction, dataTableSchema.TableName))
                 {
                     OnInsertIdentity(dataTableClone, dbCommand, dbTransaction);
                 }
             }
             else
             {
-                using (DbCommand dbCommand = dbCommandBuilder.GetInsertCommand(dataTableSchema.TableName))
+                using (DbCommand dbCommand = dbCommandBuilder.GetInsertCommand(dbTransaction, dataTableSchema.TableName))
                 {
                     OnInsert(dataTableClone, dbCommand, dbTransaction);
                 }
