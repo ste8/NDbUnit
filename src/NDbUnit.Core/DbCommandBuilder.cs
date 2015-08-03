@@ -501,10 +501,19 @@ namespace NDbUnit.Core
                     connection.Open();
                 }
 
-                IDataReader sqlDataReader = sqlSelectCommand.ExecuteReader(CommandBehavior.KeyInfo);
-                dataTableSchema = sqlDataReader.GetSchemaTable();
-                sqlSelectCommand.Cancel();
-                sqlDataReader.Close();
+                using (var selectCommand = CreateDbCommand())
+                {
+                    selectCommand.CommandText = string.Format("{0} WHERE 1=0", sqlSelectCommand.CommandText);
+                    selectCommand.Connection = sqlSelectCommand.Connection;
+                    if (sqlSelectCommand.Transaction != null)
+                        selectCommand.Transaction = sqlSelectCommand.Transaction;
+                    using (IDataReader sqlDataReader = selectCommand.ExecuteReader(CommandBehavior.KeyInfo))
+                    {
+                        dataTableSchema = sqlDataReader.GetSchemaTable();
+                        while (sqlDataReader.Read())
+                            ;
+                    }
+                }
             }
             catch (NotSupportedException)
             {
