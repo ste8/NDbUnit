@@ -205,13 +205,9 @@ namespace NDbUnit.Test.Common
                     _dbOperation.Refresh(ds, _commandBuilder, sqlTransaction);
                     sqlTransaction.Commit();
                 }
-                catch (Exception)
+                catch
                 {
-                    if (sqlTransaction != null)
-                    {
-                        sqlTransaction.Rollback();
-                    }
-
+                    sqlTransaction.Rollback();
                     throw;
                 }
             }
