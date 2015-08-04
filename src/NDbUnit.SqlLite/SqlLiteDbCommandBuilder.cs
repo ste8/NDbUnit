@@ -186,9 +186,20 @@ namespace NDbUnit.Core.SqlLite
 
         protected override IDataParameter CreateNewSqlParameter(int index, DataRow dataRow)
         {
-            return new SQLiteParameter("@p" + index, (DbType)dataRow[SchemaColumns.ProviderType],
-                                       (int)dataRow[SchemaColumns.ColumnSize],
-                                       (string)dataRow[SchemaColumns.ColumnName]);
+            var dataType = (Type)dataRow[SchemaColumns.DataType];
+            var columnSize = (int)dataRow[SchemaColumns.ColumnSize];
+            var columnName = (string)dataRow[SchemaColumns.ColumnName];
+            DbType dbType;
+            if (dataType == typeof(byte[]) && columnSize == 16)
+            {
+                dbType = DbType.Guid;
+            }
+            else
+            {
+                dbType = (DbType)dataRow[SchemaColumns.ProviderType];
+            }
+
+            return new SQLiteParameter("@p" + index, dbType, columnSize, columnName);
         }
 
         protected override DbCommand CreateSelectCommand(DbTransaction transaction, DataSet ds, string tableName)
@@ -337,7 +348,7 @@ namespace NDbUnit.Core.SqlLite
             public const string BaseSchemaName = "";
             public const string IsAutoIncrement = "IsAutoIncrement";
             public const string ProviderType = "ProviderType";
-
+            public const string DataType = "DataType";
         }
 
     }
