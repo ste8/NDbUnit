@@ -136,6 +136,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ScriptManager.cs" />
+    <Compile Include="SqlServerInsertIdentity.cs" />
     <Compile Include="TableNameHelper.cs" />
   </ItemGroup>
   <ItemGroup>

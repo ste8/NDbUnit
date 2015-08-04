@@ -45,5 +45,10 @@ namespace NDbUnit.Core.SqlServerCe
         {
             return new SqlCeCommand(cmdText);
         }
+
+        protected override void OnRefresh(DataSet ds, IDbCommandBuilder dbCommandBuilder, DbTransaction dbTransaction, string tableName, bool insertIdentity)
+        {
+            base.OnRefresh(ds, dbCommandBuilder, dbTransaction, tableName, true);
+        }
     }
 }

@@ -22,6 +22,7 @@ using System;
 using System.Data;
 using System.Collections;
 using System.Data.Common;
+using System.Linq;
 
 namespace NDbUnit.Core
 {
@@ -43,6 +44,11 @@ namespace NDbUnit.Core
             DisableAllTableConstraints(ds, dbTransaction);
             deleteCommon(ds, dbCommandBuilder, dbTransaction, true);
             EnableAllTableConstraints(ds, dbTransaction);
+        }
+
+        public IDisposable ActivateInsertIdentity(string tableName, DbTransaction dbTransaction)
+        {
+            return new SqlServerInsertIdentity(tableName, QuotePrefix, QuoteSuffix, CreateDbCommand, dbTransaction);
         }
 
         public void Insert(DataSet ds, IDbCommandBuilder dbCommandBuilder, DbTransaction dbTransaction)
@@ -68,7 +74,7 @@ namespace NDbUnit.Core
 
             foreach (DataTable dataTable in iterator)
             {
-                OnRefresh(ds, dbCommandBuilder, dbTransaction, dataTable.TableName);
+                OnRefresh(ds, dbCommandBuilder, dbTransaction, dataTable.TableName, false);
             }
 
             EnableAllTableConstraints(ds, dbTransaction);
@@ -240,75 +246,28 @@ namespace NDbUnit.Core
         {
             DbTransaction sqlTransaction = dbTransaction;
 
-            //DisableTableConstraints(dataTable, dbTransaction);
+            var hasAutoIncColumn = dataTable.Columns.Cast<DataColumn>().Any(x => x.AutoIncrement);
+            var identityInsertGuard = hasAutoIncColumn ? ActivateInsertIdentity(dataTable.TableName, dbTransaction) : null;
 
-            foreach (DataColumn column in dataTable.Columns)
+            using (identityInsertGuard)
             {
-                if (column.AutoIncrement)
-                {
-                    // Set identity insert on.
-                    using (DbCommand sqlCommand =
-                        CreateDbCommand(
-                            "SET IDENTITY_INSERT " +
-                            TableNameHelper.FormatTableName(dataTable.TableName, QuotePrefix, QuoteSuffix) +
-                            " ON"))
-                    {
-                        sqlCommand.Connection = sqlTransaction.Connection;
-                        sqlCommand.Transaction = sqlTransaction;
-                        sqlCommand.ExecuteNonQuery();
-                    }
-                    break;
-                }
-            }
-
-            try
-            {
-                DbDataAdapter sqlDataAdapter = CreateDbDataAdapter();
-                try
+                using (DbDataAdapter sqlDataAdapter = CreateDbDataAdapter())
                 {
                     sqlDataAdapter.InsertCommand = dbCommand;
                     sqlDataAdapter.InsertCommand.Connection = sqlTransaction.Connection;
                     sqlDataAdapter.InsertCommand.Transaction = sqlTransaction;
 
-                    ((DbDataAdapter)sqlDataAdapter).Update(dataTable);
+                    sqlDataAdapter.Update(dataTable);
                 }
-                finally
-                {
-                    var disposable = sqlDataAdapter as IDisposable;
-                    if (disposable != null)
-                        disposable.Dispose();
-                }
-            }
-
-            finally
-            {
-                foreach (DataColumn column in dataTable.Columns)
-                {
-                    if (column.AutoIncrement)
-                    {
-                        // Set identity insert off.
-                        DbCommand sqlCommand =
-                            CreateDbCommand("SET IDENTITY_INSERT " +
-                                            TableNameHelper.FormatTableName(dataTable.TableName, QuotePrefix,
-                                                                            QuoteSuffix) + " OFF");
-                        sqlCommand.Connection = sqlTransaction.Connection;
-                        sqlCommand.Transaction = sqlTransaction;
-                        sqlCommand.ExecuteNonQuery();
-
-                        break;
-                    }
-                }
-
-                //EnableTableConstraints(dataTable, dbTransaction);
             }
         }
 
-        protected virtual void OnRefresh(DataSet ds, IDbCommandBuilder dbCommandBuilder, DbTransaction dbTransaction, string tableName)
+        protected virtual void OnRefresh(DataSet ds, IDbCommandBuilder dbCommandBuilder, DbTransaction dbTransaction, string tableName, bool insertIdentity)
         {
             DbTransaction sqlTransaction = dbTransaction;
 
-            DbDataAdapter sqlDataAdapter = CreateDbDataAdapter();
-            try
+            
+            using (DbDataAdapter sqlDataAdapter = CreateDbDataAdapter())
             {
                 using (var selectCommand = dbCommandBuilder.GetSelectCommand(dbTransaction, tableName))
                 {
@@ -325,60 +284,65 @@ namespace NDbUnit.Core
 
                     DataTable dataTable = ds.Tables[tableName];
                     DataTable dataTableDb = dsDb.Tables[tableName];
+                    var schemaTable = dsUpdate.Tables[tableName];
+
+                    if (dataTableDb.PrimaryKey.Length == 0)
+                        dataTableDb.PrimaryKey = schemaTable
+                            .PrimaryKey
+                            .Select(c => dataTableDb.Columns[c.ColumnName])
+                            .OrderBy(c => c.Ordinal)
+                            .ToArray();
+
                     // Iterate all rows in the table.
                     foreach (DataRow dataRow in dataTable.Rows)
                     {
-                        bool rowDoesNotExist = true;
-                        // Iterate all rows in the database table.
-                        foreach (DataRow dataRowDb in dataTableDb.Rows)
-                        {
-                            // The row exists in the database.
-                            if (IsPrimaryKeyValueEqual(dataRow, dataRowDb, dsUpdate.Tables[tableName].PrimaryKey))
-                            {
-                                rowDoesNotExist = false;
-                                DataRow dataRowNew = CloneDataRow(dsUpdate.Tables[tableName], dataRow);
-                                dsUpdate.Tables[tableName].Rows.Add(dataRowNew);
-                                dataRowNew.AcceptChanges();
-                                MarkRowAsModified(dataRowNew);
-                                break;
-                            }
-                        }
+                        var pkValues = dataTableDb.PrimaryKey
+                            .Select(c => dataRow[c.ColumnName])
+                            .ToArray();
+                        var dataRowDb = dataTableDb.Rows.Find(pkValues);
+                        bool rowExists = dataRowDb != null;
+
+                        DataRow dataRowNew = CloneDataRow(dsUpdate.Tables[tableName], dataRow);
+                        dsUpdate.Tables[tableName].Rows.Add(dataRowNew);
 
                         // The row does not exist in the database.
-                        if (rowDoesNotExist)
+                        if (rowExists)
                         {
-                            DataRow dataRowNew = CloneDataRow(dsUpdate.Tables[tableName], dataRow);
-                            dsUpdate.Tables[tableName].Rows.Add(dataRowNew);
+                            dataRowNew.AcceptChanges();
+                            MarkRowAsModified(dataRowNew);
                         }
                     }
 
-                    // Does not insert identity.
-                    using (var insertCommand = dbCommandBuilder.GetInsertCommand(dbTransaction, tableName))
+                    var hasAutoIncColumn = dataTable.Columns.Cast<DataColumn>().Any(x => x.AutoIncrement);
+                    var identityInsertGuard = hasAutoIncColumn ? ActivateInsertIdentity(dataTable.TableName, dbTransaction) : null;
+
+                    using (identityInsertGuard)
                     {
-                        insertCommand.Connection = sqlTransaction.Connection;
-                        insertCommand.Transaction = sqlTransaction;
-                        sqlDataAdapter.InsertCommand = insertCommand;
-
-                        using (var updateCommand = dbCommandBuilder.GetUpdateCommand(dbTransaction, tableName))
+                        DbCommand insertCommand =
+                            insertIdentity && hasAutoIncColumn
+                                ? dbCommandBuilder.GetInsertIdentityCommand(dbTransaction, tableName)
+                                : dbCommandBuilder.GetInsertCommand(dbTransaction, tableName);
+                        using (insertCommand)
                         {
-                            updateCommand.Connection = sqlTransaction.Connection;
-                            updateCommand.Transaction = sqlTransaction;
-                            sqlDataAdapter.UpdateCommand = updateCommand;
+                            insertCommand.Connection = sqlTransaction.Connection;
+                            insertCommand.Transaction = sqlTransaction;
+                            sqlDataAdapter.InsertCommand = insertCommand;
 
-                            //DisableTableConstraints(dsUpdate.Tables[tableName], dbTransaction);
+                            using (var updateCommand = dbCommandBuilder.GetUpdateCommand(dbTransaction, tableName))
+                            {
+                                updateCommand.Connection = sqlTransaction.Connection;
+                                updateCommand.Transaction = sqlTransaction;
+                                sqlDataAdapter.UpdateCommand = updateCommand;
 
-                            ((DbDataAdapter)sqlDataAdapter).Update(dsUpdate, tableName);
+                                //DisableTableConstraints(dsUpdate.Tables[tableName], dbTransaction);
 
-                            //EnableTableConstraints(dsUpdate.Tables[tableName], dbTransaction);
+                                sqlDataAdapter.Update(dsUpdate, tableName);
+
+                                //EnableTableConstraints(dsUpdate.Tables[tableName], dbTransaction);
+                            }
                         }
                     }
                 }
-            }
-            finally
-            {
-                var disposable = sqlDataAdapter as IDisposable;
-                if (disposable != null)
-                    disposable.Dispose();
             }
         }
 

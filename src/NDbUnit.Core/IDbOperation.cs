@@ -18,6 +18,7 @@
  *
  */
 
+using System;
 using System.Data;
 using System.Data.Common;
 
@@ -25,6 +26,8 @@ namespace NDbUnit.Core
 {
     public interface IDbOperation
     {
+        IDisposable ActivateInsertIdentity(string tableName, DbTransaction dbTransaction);
+
         void Insert(DataSet ds, IDbCommandBuilder dbCommandBuilder, DbTransaction dbTransaction);
         void InsertIdentity(DataSet ds, IDbCommandBuilder dbCommandBuilder, DbTransaction dbTransaction);
         void Delete(DataSet ds, IDbCommandBuilder dbCommandBuilder, DbTransaction dbTransaction);
