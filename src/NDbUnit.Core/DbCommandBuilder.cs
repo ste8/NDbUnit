@@ -223,7 +223,9 @@ namespace NDbUnit.Core
                     isTimeStamp = dataRow["DataTypeName"].ToString() == "timestamp";
                 }
 
-                return found && !(bool)dataRow["IsHidden"] && !isTimeStamp;
+                var isHidden = dataRow.Table.Columns.Contains("IsHidden")
+                               && (bool)dataRow["IsHidden"];
+                return found && !isHidden && !isTimeStamp;
             }
             catch (Exception)
             {
