@@ -111,6 +111,7 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="IScript.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -135,6 +136,8 @@
     <Compile Include="NDbUnitTest.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Script.cs" />
+    <Compile Include="ScriptFile.cs" />
     <Compile Include="ScriptManager.cs" />
     <Compile Include="SqlServerInsertIdentity.cs" />
     <Compile Include="TableNameHelper.cs" />

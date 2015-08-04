@@ -7,8 +7,8 @@ namespace NDbUnit.Core
 {
     public interface IFileSystemService
     {
-        IEnumerable<FileInfo> GetFilesInCurrentDirectory(string fileSpec);
-        IEnumerable<FileInfo> GetFilesInSpecificDirectory(string pathSpec, string fileSpec);
-        FileInfo GetSpecificFile(string fileSpec);
+        IEnumerable<IScript> GetFilesInCurrentDirectory(string fileSpec);
+        IEnumerable<IScript> GetFilesInSpecificDirectory(string pathSpec, string fileSpec);
+        IScript GetSpecificFile(string fileSpec);
     }
 }

@@ -9,7 +9,7 @@ namespace NDbUnit.Core
     {
         private IFileSystemService _fileSystem;
 
-        private IList<FileInfo> _scripts = new List<FileInfo>();
+        private List<IScript> _scripts = new List<IScript>();
 
         public ScriptManager(IFileSystemService fileSystem)
         {
@@ -18,35 +18,36 @@ namespace NDbUnit.Core
 
         public IEnumerable<string> ScriptContents
         {
-            get
-            {
-                return GetScriptContents();
-            }
+            get { return GetScriptContents(); }
         }
 
-        public IEnumerable<FileInfo> Scripts
+        public IEnumerable<IScript> Scripts
         {
-            get
-            {
-                return _scripts;
-            }
+            get { return _scripts; }
+        }
+
+        public void Add(IScript script)
+        {
+            if (script == null)
+                return;
+            _scripts.Add(script);
+        }
+
+        public void AddRange(IEnumerable<IScript> scripts)
+        {
+            if (scripts == null)
+                return;
+            _scripts.AddRange(scripts.OrderBy(x => x.Name));
         }
 
         public void AddWithWildcard(string pathSpec, string fileSpec)
         {
-            IEnumerable<FileInfo> files = _fileSystem.GetFilesInSpecificDirectory(pathSpec, fileSpec);
-            if (files == null)
-                return;
-            foreach (var file in files.OrderBy(f => f.Name))
-                _scripts.Add(file);
+            AddRange(_fileSystem.GetFilesInSpecificDirectory(pathSpec, fileSpec));
         }
 
         public void AddSingle(string fileSpec)
         {
-            var file = _fileSystem.GetSpecificFile(fileSpec);
-            if (file != null)
-                _scripts.Add(file);
-
+            Add(_fileSystem.GetSpecificFile(fileSpec));
         }
 
         public void ClearAll()
@@ -63,12 +64,9 @@ namespace NDbUnit.Core
         {
             IList<string> contents = new List<string>();
 
-            foreach (FileInfo script in Scripts)
+            foreach (var script in Scripts)
             {
-                using (StreamReader reader = script.OpenText())
-                {
-                    contents.Add(reader.ReadToEnd());
-                }
+                contents.Add(script.GetContents());
             }
 
             return contents;

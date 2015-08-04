@@ -19,7 +19,7 @@ namespace NDbUnit.Test.ScriptManager
             var mocks = new MockRepository();
 
             var fileService = mocks.Stub<IFileSystemService>();
-            SetupResult.For(fileService.GetFilesInSpecificDirectory(".", "*.*")).Return(new FileInfo[] { new FileInfo(SECONDFILE), new FileInfo(THIRDFILE), new FileInfo(FIRSTFILE) });
+            SetupResult.For(fileService.GetFilesInSpecificDirectory(".", "*.*")).Return(new[] { new FileInfo(SECONDFILE), new FileInfo(THIRDFILE), new FileInfo(FIRSTFILE) }.Select(x => new ScriptFile(x)).ToList());
 
             mocks.ReplayAll();
 

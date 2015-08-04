@@ -22,7 +22,7 @@ namespace NDbUnit.Test.ScriptManager
             _mocks = new MockRepository();
 
             var fileService = _mocks.Stub<IFileSystemService>();
-            SetupResult.For(fileService.GetSpecificFile(_theFileSpec)).Return(new FileInfo(_theFileSpec));
+            SetupResult.For(fileService.GetSpecificFile(_theFileSpec)).Return(new ScriptFile(new FileInfo(_theFileSpec)));
 
             _mocks.ReplayAll();
 
@@ -35,7 +35,7 @@ namespace NDbUnit.Test.ScriptManager
         {
             bool found = false;
 
-            foreach (FileInfo script in _manager.Scripts)
+            foreach (var script in _manager.Scripts)
             {
                 if (script.Name == _theFileSpec)
                 {
@@ -56,7 +56,7 @@ namespace NDbUnit.Test.ScriptManager
 
             bool found = false;
 
-            foreach (FileInfo script in _manager.Scripts)
+            foreach (var script in _manager.Scripts)
             {
                 if (script.Name == NONEXISTENTFILE)
                 {

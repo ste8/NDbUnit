@@ -1,26 +1,26 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace NDbUnit.Core
 {
     public class FileSystemService : IFileSystemService
     {
-        public IEnumerable<FileInfo> GetFilesInCurrentDirectory(string fileSpec)
+        public IEnumerable<IScript> GetFilesInCurrentDirectory(string fileSpec)
         {
             return GetFilesInSpecificDirectory(".", fileSpec);
         }
 
-        public IEnumerable<FileInfo> GetFilesInSpecificDirectory(string pathSpec, string fileSpec)
+        public IEnumerable<IScript> GetFilesInSpecificDirectory(string pathSpec, string fileSpec)
         {
             DirectoryInfo dir = new DirectoryInfo(pathSpec);
-            return dir.GetFiles(fileSpec);
+            return dir.EnumerateFiles(fileSpec).Select(x => new ScriptFile(x));
         }
 
-        public FileInfo GetSpecificFile(string fileSpec)
+        public IScript GetSpecificFile(string fileSpec)
         {
-            return new FileInfo(fileSpec);
+            return new ScriptFile(new FileInfo(fileSpec));
         }
-
     }
 }
