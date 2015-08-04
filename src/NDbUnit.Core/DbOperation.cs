@@ -52,10 +52,7 @@ namespace NDbUnit.Core
         /// <param name="tableName">The table name to activate the identity insert for</param>
         /// <param name="dbTransaction">The current transaction</param>
         /// <returns>The new object that - when disposed - deactivates the identity insert</returns>
-        public virtual IDisposable ActivateInsertIdentity(string tableName, DbTransaction dbTransaction)
-        {
-            return new SqlServerInsertIdentity(tableName, QuotePrefix, QuoteSuffix, CreateDbCommand, dbTransaction);
-        }
+        public abstract IDisposable ActivateInsertIdentity(string tableName, DbTransaction dbTransaction);
 
         public void Insert(DataSet ds, IDbCommandBuilder dbCommandBuilder, DbTransaction dbTransaction)
         {
@@ -80,7 +77,7 @@ namespace NDbUnit.Core
 
             foreach (DataTable dataTable in iterator)
             {
-                OnRefresh(ds, dbCommandBuilder, dbTransaction, dataTable.TableName, false);
+                OnRefresh(ds, dbCommandBuilder, dbTransaction, dataTable.TableName, true);
             }
 
             EnableAllTableConstraints(ds, dbTransaction);
@@ -315,7 +312,8 @@ namespace NDbUnit.Core
                         if (rowExists)
                         {
                             dataRowNew.AcceptChanges();
-                            MarkRowAsModified(dataRowNew);
+                            if (dataTableDb.PrimaryKey.Length != dataTableDb.Columns.Count)
+                                MarkRowAsModified(dataRowNew);
                         }
                     }
 

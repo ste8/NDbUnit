@@ -50,37 +50,11 @@ namespace NDbUnit.Core.OleDb
         public OleDbUnitTest(OleDbConnection connection)
             : base(connection)
         {
-            var csb = new OleDbConnectionStringBuilder(connection.ConnectionString);
-            ParseConnectionStringBuilder(csb);
         }
 
         public OleDbUnitTest(string connectionString)
             : base(connectionString)
         {
-            var csb = new OleDbConnectionStringBuilder(connectionString);
-            ParseConnectionStringBuilder(csb);
-        }
-
-        /// <summary>
-        /// Gets or sets the OLE database type.  The default value for an 
-        /// instance of an object is <see cref="OleDb.OleDbType.NoDb" />.
-        /// </summary>
-        public OleDbType OleOleDbType
-        {
-            get
-            {
-                var op = OleDbOperation;
-                if (op != null)
-                    return op.OleOleDbType;
-                return OleDbType.NoDb;
-            }
-
-            set
-            {
-                var op = OleDbOperation;
-                if (op != null)
-                    op.OleOleDbType = value;
-            }
         }
 
         private OleDbOperation OleDbOperation
@@ -101,19 +75,6 @@ namespace NDbUnit.Core.OleDb
         protected override IDbOperation CreateDbOperation()
         {
             return new OleDbOperation();
-        }
-
-        private void ParseConnectionStringBuilder(OleDbConnectionStringBuilder csb)
-        {
-            var provider = csb.Provider.ToLowerInvariant();
-            if (string.Equals(provider, "SQLOLEDB", StringComparison.OrdinalIgnoreCase))
-            {
-                OleOleDbType = OleDbType.SqlServer;
-            }
-            else if (provider.StartsWith("SQLNCLI", StringComparison.OrdinalIgnoreCase))
-            {
-                OleOleDbType = OleDbType.SqlServer;
-            }
         }
     }
 }

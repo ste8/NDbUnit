@@ -38,6 +38,17 @@ namespace NDbUnit.Core.MySqlClient
             get { return "]"; }
         }
 
+        /// <summary>
+        /// Creates an object to activate or deactivate identity insert
+        /// </summary>
+        /// <param name="tableName">The table name to activate the identity insert for</param>
+        /// <param name="dbTransaction">The current transaction</param>
+        /// <returns>The new object that - when disposed - deactivates the identity insert</returns>
+        public override IDisposable ActivateInsertIdentity(string tableName, DbTransaction dbTransaction)
+        {
+            return null;
+        }
+
         protected override DbDataAdapter CreateDbDataAdapter()
         {
             return new MySqlDataAdapter();
