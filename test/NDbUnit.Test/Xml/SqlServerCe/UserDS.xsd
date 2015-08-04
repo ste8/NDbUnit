@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<xs:schema id="SqlServerCeDataSet" targetNamespace="http://tempuri.org/SqlServerCeDataSet.xsd" xmlns:mstns="http://tempuri.org/SqlServerCeDataSet.xsd" xmlns="http://tempuri.org/SqlServerCeDataSet.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+<xs:schema id="SqlServerCeDataSet" targetNamespace="http://tempuri.org/UserDS.xsd" xmlns:mstns="http://tempuri.org/UserDS.xsd" xmlns="http://tempuri.org/UserDS.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
   <xs:annotation>
     <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
       <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
@@ -11,7 +11,7 @@
       </DataSource>
     </xs:appinfo>
   </xs:annotation>
-  <xs:element name="SqlServerCeDataSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:Generator_UserDSName="SqlServerCeDataSet" msprop:Generator_DataSetName="SqlServerCeDataSet" msprop:EnableTableAdapterManager="True">
+  <xs:element name="UserDS" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:Generator_UserDSName="UserDS" msprop:Generator_DataSetName="UserDS" msprop:EnableTableAdapterManager="True">
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element name="Role" msprop:Generator_UserTableName="Role" msprop:Generator_RowDeletedName="RoleRowDeleted" msprop:Generator_RowChangedName="RoleRowChanged" msprop:Generator_RowClassName="RoleRow" msprop:Generator_RowChangingName="RoleRowChanging" msprop:Generator_RowEvArgName="RoleRowChangeEvent" msprop:Generator_RowEvHandlerName="RoleRowChangeEventHandler" msprop:Generator_TableClassName="RoleDataTable" msprop:Generator_TableVarName="tableRole" msprop:Generator_RowDeletingName="RoleRowDeleting" msprop:Generator_TablePropName="Role">
