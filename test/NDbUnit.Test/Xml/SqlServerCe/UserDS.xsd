@@ -76,6 +76,11 @@
       <xs:selector xpath=".//mstns:User" />
       <xs:field xpath="mstns:ID" />
     </xs:unique>
+    <xs:unique name="UserRole_Constraint1" msdata:ConstraintName="Constraint1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//mstns:UserRole" />
+      <xs:field xpath="mstns:UserID" />
+      <xs:field xpath="mstns:RoleID" />
+    </xs:unique>
     <xs:keyref name="FK_UserRole_Role" refer="Constraint1" msdata:ConstraintOnly="true" msdata:UpdateRule="None" msdata:DeleteRule="None">
       <xs:selector xpath=".//mstns:UserRole" />
       <xs:field xpath="mstns:RoleID" />
