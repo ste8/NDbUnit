@@ -18,6 +18,7 @@
  *
  */
 
+using System;
 using System.Data;
 using System.Data.Common;
 using System.Data.OleDb;
@@ -44,18 +45,20 @@ namespace NDbUnit.Core.OleDb
         /// <summary>
         /// Initializes a new instance of the <see cref="OleDbUnitTest"/> class.
         /// </summary>
-        /// <param name="connectionString">The connection string 
-        /// used to open the database.
-        /// <seealso cref="System.Data.DbConnection"/></param>
+        /// <param name="connection">The database connection (<seealso cref="DbConnection"/>)</param>
 
         public OleDbUnitTest(OleDbConnection connection)
             : base(connection)
         {
+            var csb = new OleDbConnectionStringBuilder(connection.ConnectionString);
+            ParseConnectionStringBuilder(csb);
         }
 
         public OleDbUnitTest(string connectionString)
             : base(connectionString)
         {
+            var csb = new OleDbConnectionStringBuilder(connectionString);
+            ParseConnectionStringBuilder(csb);
         }
 
         /// <summary>
@@ -66,13 +69,23 @@ namespace NDbUnit.Core.OleDb
         {
             get
             {
-                return ((OleDbOperation)GetDbOperation()).OleOleDbType;
+                var op = OleDbOperation;
+                if (op != null)
+                    return op.OleOleDbType;
+                return OleDbType.NoDb;
             }
 
             set
             {
-                ((OleDbOperation)GetDbOperation()).OleOleDbType = value;
+                var op = OleDbOperation;
+                if (op != null)
+                    op.OleOleDbType = value;
             }
+        }
+
+        private OleDbOperation OleDbOperation
+        {
+            get { return GetDbOperation() as OleDbOperation; }
         }
 
         protected override DbDataAdapter CreateDataAdapter(DbCommand command)
@@ -90,5 +103,17 @@ namespace NDbUnit.Core.OleDb
             return new OleDbOperation();
         }
 
+        private void ParseConnectionStringBuilder(OleDbConnectionStringBuilder csb)
+        {
+            var provider = csb.Provider.ToLowerInvariant();
+            if (string.Equals(provider, "SQLOLEDB", StringComparison.OrdinalIgnoreCase))
+            {
+                OleOleDbType = OleDbType.SqlServer;
+            }
+            else if (provider.StartsWith("SQLNCLI", StringComparison.OrdinalIgnoreCase))
+            {
+                OleOleDbType = OleDbType.SqlServer;
+            }
+        }
     }
 }
