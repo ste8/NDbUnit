@@ -349,7 +349,6 @@ namespace NDbUnit.Core
                         {
                             DataRow dataRowNew = CloneDataRow(dsUpdate.Tables[tableName], dataRow);
                             dsUpdate.Tables[tableName].Rows.Add(dataRowNew);
-                            dataRowNew.AcceptChanges();
                         }
                     }
 
