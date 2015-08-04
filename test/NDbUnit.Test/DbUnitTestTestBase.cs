@@ -103,17 +103,18 @@ namespace NDbUnit.Test.Common
             _nDbUnitTestStub.PostOperation += new PostOperationEvent(sqlCeTest_PostOperation);
 
             //expectations
+            SetupResult.For(_mockConnection.State).Return(ConnectionState.Closed);
             _mockDbCommandBuilder.BuildCommands(_mockSchemaFileStream);
             DataSet dummyDS = new DataSet();
             dummyDS.ReadXmlSchema(ReadOnlyStreamFromFilename(GetXmlSchemaFilename()));
             SetupResult.For(_mockDbCommandBuilder.GetSchema()).Return(dummyDS);
             SetupResult.For(_mockDbCommandBuilder.Connection).Return(_mockConnection);
             //_mockConnection.Open();
+            _mockConnection.Open();
             SetupResult.For(_mockConnection.BeginTransaction()).Return(_mockTransaction);
             _mockDbOperation.Update(dummyDS, _mockDbCommandBuilder, _mockTransaction);
             LastCall.IgnoreArguments().Constraints(Is.TypeOf<DataSet>(), Is.Equal(_mockDbCommandBuilder), Is.Equal(_mockTransaction));
             _mockTransaction.Commit();
-            SetupResult.For(_mockConnection.State).Return(ConnectionState.Open);
             _mockTransaction.Dispose();
             _mockConnection.Close();
             //end expectations

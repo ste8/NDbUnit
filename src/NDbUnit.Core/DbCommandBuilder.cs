@@ -493,43 +493,27 @@ namespace NDbUnit.Core
         {
             DataTable dataTableSchema = new DataTable();
 
-            var connection = ConnectionManager.GetConnection();
-
-            var connectionWasClosed = ConnectionState.Closed == connection.State;
-            try
+            using (new OpenConnectionGuard(ConnectionManager))
             {
-                if (connectionWasClosed)
+                try
                 {
-                    connection.Open();
-                }
-
-                using (var selectCommand = CreateDbCommand())
-                {
-                    selectCommand.CommandText = string.Format("{0} WHERE 1=0", sqlSelectCommand.CommandText);
-                    selectCommand.Connection = sqlSelectCommand.Connection;
-                    if (sqlSelectCommand.Transaction != null)
-                        selectCommand.Transaction = sqlSelectCommand.Transaction;
-                    using (IDataReader sqlDataReader = selectCommand.ExecuteReader(CommandBehavior.KeyInfo))
+                    using (var selectCommand = CreateDbCommand())
                     {
-                        dataTableSchema = sqlDataReader.GetSchemaTable();
-                        while (sqlDataReader.Read())
-                            ;
+                        selectCommand.CommandText = string.Format("{0} WHERE 1=0", sqlSelectCommand.CommandText);
+                        selectCommand.Connection = sqlSelectCommand.Connection;
+                        if (sqlSelectCommand.Transaction != null)
+                            selectCommand.Transaction = sqlSelectCommand.Transaction;
+                        using (IDataReader sqlDataReader = selectCommand.ExecuteReader(CommandBehavior.KeyInfo))
+                        {
+                            dataTableSchema = sqlDataReader.GetSchemaTable();
+                            while (sqlDataReader.Read())
+                                ;
+                        }
                     }
                 }
-            }
-            catch (NotSupportedException)
-            {
-                //swallow this since .Close() op isn't supported on all DB targets (e.g., SQLCE)
-            }
-            finally
-            {
-                //Only close connection if connection was not passed to constructor
-                if (!ConnectionManager.HasExternallyManagedConnection)
+                catch (NotSupportedException)
                 {
-                    if (connection.State != ConnectionState.Closed && connectionWasClosed)
-                    {
-                        connection.Close();
-                    }
+                    //swallow this since .Close() op isn't supported on all DB targets (e.g., SQLCE)
                 }
             }
 

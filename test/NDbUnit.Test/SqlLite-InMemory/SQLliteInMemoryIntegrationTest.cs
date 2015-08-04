@@ -76,13 +76,13 @@ namespace NDbUnit.Test.SqlLite_InMemory
             DbCommand command = _connection.CreateCommand();
             command.CommandText = ReadTextFromFile(@"scripts\sqlite-testdb-create.sql");
 
-            if (_connection.State != ConnectionState.Open)
-                _connection.Open();
+            using (new OpenConnectionGuard(_connection))
+            {
+                command.ExecuteNonQuery();
 
-            command.ExecuteNonQuery();
-
-            command.CommandText = "Select * from Role";
-            command.ExecuteReader();
+                command.CommandText = "Select * from Role";
+                command.ExecuteReader();
+            }
         }
 
         private string ReadTextFromFile(string filename)

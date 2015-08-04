@@ -5,12 +5,20 @@ using System.Data.Odbc;
 
 namespace NDbUnit.Core
 {
-    public class DbConnectionManager<TDbConnection> where TDbConnection : DbConnection, new()
+    public class DbConnectionManager<TDbConnection> : IDbConnectionManager where TDbConnection : DbConnection, new()
     {
         private TDbConnection _connection;
         private readonly string _connectionString;
         
         public bool HasExternallyManagedConnection { get; private set; }
+
+        DbConnection IDbConnectionManager.Connection
+        {
+            get
+            {
+                return GetConnection();
+            }
+        }
 
         public DbConnectionManager(string connectionString)
         {

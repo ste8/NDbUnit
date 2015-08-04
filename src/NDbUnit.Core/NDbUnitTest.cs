@@ -128,18 +128,15 @@ namespace NDbUnit.Core
         {
             var connection = ConnectionManager.GetConnection();
 
-            if (connection.State != ConnectionState.Open)
-                connection.Open();
-
-            foreach (string ddlText in ScriptManager.ScriptContents)
+            using (new OpenConnectionGuard(ConnectionManager))
             {
-                DbCommand command = connection.CreateCommand();
-                command.CommandText = ddlText;
-                command.ExecuteNonQuery();
+                foreach (string ddlText in ScriptManager.ScriptContents)
+                {
+                    DbCommand command = connection.CreateCommand();
+                    command.CommandText = ddlText;
+                    command.ExecuteNonQuery();
+                }
             }
-
-            if (connection.State != ConnectionState.Closed)
-                connection.Close();
         }
 
         public DataSet GetDataSetFromDb(StringCollection tableNames, DbTransaction dbTransaction)
@@ -157,9 +154,8 @@ namespace NDbUnit.Core
             }
 
             DbConnection dbConnection = dbCommandBuilder.Connection;
-            try
+            using (new OpenConnectionGuard(dbConnection))
             {
-                dbConnection.Open();
                 DataSet dsToFill = _dataSet.Clone();
 
                 dsToFill.EnforceConstraints = false;
@@ -172,13 +168,6 @@ namespace NDbUnit.Core
                 dsToFill.EnforceConstraints = true;
 
                 return dsToFill;
-            }
-            finally
-            {
-                if (ConnectionState.Open == dbConnection.State)
-                {
-                    dbConnection.Close();
-                }
             }
         }
 
@@ -202,101 +191,89 @@ namespace NDbUnit.Core
             DbTransaction dbTransaction = null;
             DbConnection dbConnection = dbCommandBuilder.Connection;
 
-            try
+            using (new OpenConnectionGuard(dbConnection, ConnectionManager.HasExternallyManagedConnection))
             {
-                if (dbConnection.State != ConnectionState.Open)
+                try
                 {
-                    dbConnection.Open();
-                }
-                dbTransaction = dbConnection.BeginTransaction();
+                    dbTransaction = dbConnection.BeginTransaction();
 
-                OperationEventArgs args = new OperationEventArgs();
-                args.DbTransaction = dbTransaction;
+                    OperationEventArgs args = new OperationEventArgs();
+                    args.DbTransaction = dbTransaction;
 
-                if (null != PreOperation)
-                {
-                    PreOperation(this, args);
-                }
-
-                switch (dbOperationFlag)
-                {
-                    case DbOperationFlag.Insert:
-                        {
-                            dbOperation.Insert(_dataSet, dbCommandBuilder, dbTransaction);
-                            break;
-                        }
-                    case DbOperationFlag.InsertIdentity:
-                        {
-                            dbOperation.InsertIdentity(_dataSet, dbCommandBuilder, dbTransaction);
-                            break;
-                        }
-                    case DbOperationFlag.Delete:
-                        {
-                            dbOperation.Delete(_dataSet, dbCommandBuilder, dbTransaction);
-
-                            break;
-                        }
-                    case DbOperationFlag.DeleteAll:
-                        {
-                            dbOperation.DeleteAll(_dataSet, dbCommandBuilder, dbTransaction);
-                            break;
-                        }
-                    case DbOperationFlag.Refresh:
-                        {
-                            dbOperation.Refresh(_dataSet, dbCommandBuilder, dbTransaction);
-                            break;
-                        }
-                    case DbOperationFlag.Update:
-                        {
-                            dbOperation.Update(_dataSet, dbCommandBuilder, dbTransaction);
-                            break;
-                        }
-                    case DbOperationFlag.CleanInsert:
-                        {
-                            dbOperation.DeleteAll(_dataSet, dbCommandBuilder, dbTransaction);
-                            dbOperation.Insert(_dataSet, dbCommandBuilder, dbTransaction);
-                            break;
-                        }
-                    case DbOperationFlag.CleanInsertIdentity:
-                        {
-                            dbOperation.DeleteAll(_dataSet, dbCommandBuilder, dbTransaction);
-                            dbOperation.InsertIdentity(_dataSet, dbCommandBuilder, dbTransaction);
-                            break;
-                        }
-                }
-
-                if (null != PostOperation)
-                {
-                    PostOperation(this, args);
-                }
-
-                dbTransaction.Commit();
-            }
-            catch (Exception)
-            {
-                if (dbTransaction != null)
-                {
-                    dbTransaction.Rollback();
-                }
-
-                throw;
-            }
-            finally
-            {
-                if (dbTransaction != null)
-                {
-                    dbTransaction.Dispose();
-                }
-
-                //only close and release the connection if not externally-managed
-                if (!ConnectionManager.HasExternallyManagedConnection)
-                {
-                    if (ConnectionState.Open == dbConnection.State)
+                    if (null != PreOperation)
                     {
-                        dbConnection.Close();
+                        PreOperation(this, args);
                     }
 
-                    ConnectionManager.ReleaseConnection();
+                    switch (dbOperationFlag)
+                    {
+                        case DbOperationFlag.Insert:
+                            {
+                                dbOperation.Insert(_dataSet, dbCommandBuilder, dbTransaction);
+                                break;
+                            }
+                        case DbOperationFlag.InsertIdentity:
+                            {
+                                dbOperation.InsertIdentity(_dataSet, dbCommandBuilder, dbTransaction);
+                                break;
+                            }
+                        case DbOperationFlag.Delete:
+                            {
+                                dbOperation.Delete(_dataSet, dbCommandBuilder, dbTransaction);
+
+                                break;
+                            }
+                        case DbOperationFlag.DeleteAll:
+                            {
+                                dbOperation.DeleteAll(_dataSet, dbCommandBuilder, dbTransaction);
+                                break;
+                            }
+                        case DbOperationFlag.Refresh:
+                            {
+                                dbOperation.Refresh(_dataSet, dbCommandBuilder, dbTransaction);
+                                break;
+                            }
+                        case DbOperationFlag.Update:
+                            {
+                                dbOperation.Update(_dataSet, dbCommandBuilder, dbTransaction);
+                                break;
+                            }
+                        case DbOperationFlag.CleanInsert:
+                            {
+                                dbOperation.DeleteAll(_dataSet, dbCommandBuilder, dbTransaction);
+                                dbOperation.Insert(_dataSet, dbCommandBuilder, dbTransaction);
+                                break;
+                            }
+                        case DbOperationFlag.CleanInsertIdentity:
+                            {
+                                dbOperation.DeleteAll(_dataSet, dbCommandBuilder, dbTransaction);
+                                dbOperation.InsertIdentity(_dataSet, dbCommandBuilder, dbTransaction);
+                                break;
+                            }
+                    }
+
+                    if (null != PostOperation)
+                    {
+                        PostOperation(this, args);
+                    }
+
+                    dbTransaction.Commit();
+                }
+                catch (Exception)
+                {
+                    if (dbTransaction != null)
+                    {
+                        dbTransaction.Rollback();
+                    }
+
+                    throw;
+                }
+                finally
+                {
+                    if (dbTransaction != null)
+                    {
+                        dbTransaction.Dispose();
+                    }
                 }
             }
         }

@@ -81,20 +81,14 @@ namespace NDbUnit.Core.MySqlClient
         public override void ExecuteScripts()
         {
             var connection = ConnectionManager.GetConnection();
-
-            if (connection.State != ConnectionState.Open)
-                connection.Open();
-
-            foreach (string ddlText in ScriptManager.ScriptContents)
+            using (new OpenConnectionGuard(ConnectionManager))
             {
-                var script = new MySqlScript(connection, ddlText);
-                script.Execute();
+                foreach (string ddlText in ScriptManager.ScriptContents)
+                {
+                    var script = new MySqlScript(connection, ddlText);
+                    script.Execute();
+                }
             }
-
-
-            if (connection.State != ConnectionState.Closed)
-                connection.Close();
-
         }
     }
 }

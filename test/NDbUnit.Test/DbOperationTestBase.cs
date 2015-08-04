@@ -134,14 +134,7 @@ namespace NDbUnit.Test.Common
         public void Insert_Executes_Without_Exception()
         {
             ResetIdentityColumns();
-
-            _commandBuilder.ReleaseConnection();
-            _commandBuilder.Connection.Open();
-
             DeleteAll_Executes_Without_Exception();
-
-            _commandBuilder.ReleaseConnection();
-            _commandBuilder.Connection.Open();
 
             using (var sqlTransaction = _commandBuilder.Connection.BeginTransaction())
             {
