@@ -49,6 +49,17 @@ namespace NDbUnit.Core.SqlLite
         }
 
         /// <summary>
+        /// Creates an object to activate or deactivate identity insert
+        /// </summary>
+        /// <param name="tableName">The table name to activate the identity insert for</param>
+        /// <param name="dbTransaction">The current transaction</param>
+        /// <returns>The new object that - when disposed - deactivates the identity insert</returns>
+        public override IDisposable ActivateInsertIdentity(string tableName, DbTransaction dbTransaction)
+        {
+            return null;
+        }
+
+        /// <summary>
         /// Disable the constraints for the whole database
         /// </summary>
         /// <param name="dataSet">The <see cref="DataSet"/> containing all the tables where the constraints must be disabled</param>

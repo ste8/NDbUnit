@@ -46,7 +46,13 @@ namespace NDbUnit.Core
             EnableAllTableConstraints(ds, dbTransaction);
         }
 
-        public IDisposable ActivateInsertIdentity(string tableName, DbTransaction dbTransaction)
+        /// <summary>
+        /// Creates an object to activate or deactivate identity insert
+        /// </summary>
+        /// <param name="tableName">The table name to activate the identity insert for</param>
+        /// <param name="dbTransaction">The current transaction</param>
+        /// <returns>The new object that - when disposed - deactivates the identity insert</returns>
+        public virtual IDisposable ActivateInsertIdentity(string tableName, DbTransaction dbTransaction)
         {
             return new SqlServerInsertIdentity(tableName, QuotePrefix, QuoteSuffix, CreateDbCommand, dbTransaction);
         }
@@ -314,7 +320,7 @@ namespace NDbUnit.Core
                     }
 
                     var hasAutoIncColumn = dataTable.Columns.Cast<DataColumn>().Any(x => x.AutoIncrement);
-                    var identityInsertGuard = hasAutoIncColumn ? ActivateInsertIdentity(dataTable.TableName, dbTransaction) : null;
+                    var identityInsertGuard = insertIdentity && hasAutoIncColumn ? ActivateInsertIdentity(dataTable.TableName, dbTransaction) : null;
 
                     using (identityInsertGuard)
                     {

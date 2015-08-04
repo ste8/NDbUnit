@@ -26,6 +26,12 @@ namespace NDbUnit.Core
 {
     public interface IDbOperation
     {
+        /// <summary>
+        /// Creates an object to activate or deactivate identity insert
+        /// </summary>
+        /// <param name="tableName">The table name to activate the identity insert for</param>
+        /// <param name="dbTransaction">The current transaction</param>
+        /// <returns>The new object that - when disposed - deactivates the identity insert</returns>
         IDisposable ActivateInsertIdentity(string tableName, DbTransaction dbTransaction);
 
         void Insert(DataSet ds, IDbCommandBuilder dbCommandBuilder, DbTransaction dbTransaction);
