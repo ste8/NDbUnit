@@ -24,15 +24,15 @@ SET default_with_oids = false;
 
 CREATE TABLE "Role" (
     "ID" SERIAL NOT NULL,
-    "Name" character(45),
-    "Description" character(45)
+    "Name" varchar(45),
+    "Description" varchar(45)
 );
 
 
 CREATE TABLE "User" (
     "ID" SERIAL NOT NULL,
-    "FirstName" character(45),
-    "LastName" character(45),
+    "FirstName" varchar(45),
+    "LastName" varchar(45),
     "Age" bigint,
     "SupervisorID" bigint
 );
