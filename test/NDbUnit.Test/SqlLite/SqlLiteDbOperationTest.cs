@@ -2,7 +2,7 @@
  *
  * NDbUnit
  * Copyright (C) 2005 - 2015
- * https://github.com/NDbUnit/NDbUnit
+ * https://github.com/fubar-coder/NDbUnit
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.

@@ -1,12 +1,15 @@
 #NDbUnit is a .NET library for managing database state during unit testing.#
 
-[![Build status](https://ci.appveyor.com/api/projects/status/a733dsuvlbr6eyd0?svg=true)](https://ci.appveyor.com/project/sbohlen/ndbunit)
+[![Build-Status](https://img.shields.io/teamcity/https/build.fubar-dev.com/s/NDbUnit_ReleaseBuild.svg?label=TeamCity)](https://build.fubar-dev.com/viewType.html?buildTypeId=NDbUnit_ReleaseBuild&guest=1)
 
-[![Project Stats](https://www.openhub.net/p/ndbunit/widgets/project_thin_badge.gif)](https://www.openhub.net/p/ndbunit)
+NDbUnit may be used to increase repeat-ability in unit tests that
+interact with a database by ensuring that the database's state is
+consistent across execution of tests. NDbUnit does this by allowing
+the unit test to perform an operation on a dataset before or after
+the execution of a test, thus ensuring a consistent state.
 
-NDbUnit may be used to increase repeat-ability in unit tests that interact with a database by ensuring that the database's state is consistent across execution of tests. NDbUnit does this by allowing the unit test to perform an operation on a dataset before or after the execution of a test, thus ensuring a consistent state.
-
-To better understand how NDbUnit works, check out the [Quick Start Guide](https://github.com/NDbUnit/NDbUnit/wiki/Quick-Start-Guide)
+To better understand how NDbUnit works, check out the
+[Quick Start Guide](https://github.com/NDbUnit/NDbUnit/wiki/Quick-Start-Guide)
 
 The easiest way to get NDbUnit is via [the NuGet Package Manager](http://nuget.org) from right inside Visual Studio!
 
@@ -14,7 +17,7 @@ The easiest way to get NDbUnit is via [the NuGet Package Manager](http://nuget.o
     
 * is an open-source Apache 2.0-licensed project
 * is written in C#
-* compiled against the .NET 2.0 CLR and runs with the 2.0, 3.0, and 3.5, 4.0, and 4.5 fx releases
+* compiled against the .NET 4.0 CLR and runs with all full .NET Frameworks of version 4.0 or later
 * borrows many ideas from DbUnit, and makes them available for the .NET platform
 
 **NDbUnit supports the following Database Server Targets:**
@@ -27,5 +30,5 @@ The easiest way to get NDbUnit is via [the NuGet Package Manager](http://nuget.o
 * PostgreSQL through 9.4
 * Oracle (XE thru Enterprise, tested up to 12c)
 
-For additional planned features and enhancements, see the [Project Road-Map](https://github.com/NDbUnit/NDbUnit/wiki/Project-Road-Map).
-
+For additional planned features and enhancements, see the
+[Project Road-Map](https://github.com/NDbUnit/NDbUnit/wiki/Project-Road-Map).
