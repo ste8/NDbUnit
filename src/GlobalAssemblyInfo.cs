@@ -1,4 +1,4 @@
-/*
+﻿/*
  *
  * NDbUnit
  * Copyright (C) 2005 - 2015
@@ -27,7 +27,7 @@ using System.Reflection;
 //
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyCopyright("Copyright �  2005-2015 Stephen Bohlen")]
+[assembly: AssemblyCopyright("Copyright © 2005-2015 Stephen Bohlen")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]	
 
