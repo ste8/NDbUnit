@@ -18,8 +18,11 @@
  *
  */
 
+using System;
 using System.Data;
 using System.IO;
+using System.Linq;
+
 using NDbUnit.Core;
 using NUnit.Framework;
 
@@ -75,8 +78,6 @@ namespace NDbUnit.Test
         {
             using (INDbUnitTest database = GetNDbUnitTest())
             {
-                DataSet expectedDataSet = BuildDataSet(GetXmlFilename());
-
                 database.ReadXmlSchema(ReadOnlyStreamFromFilename(GetXmlSchemaFilename()));
                 database.ReadXml(ReadOnlyStreamFromFilename(GetXmlFilename()));
 
@@ -87,6 +88,12 @@ namespace NDbUnit.Test
                 database.PerformDbOperation(DbOperationFlag.Refresh);
 
                 DataSet actualDataSet = database.GetDataSetFromDb(null);
+
+                DataSet originalDataSet = BuildDataSet(GetXmlFilename());
+                DataSet refreshDataSet = BuildDataSet(GetXmlRefreshFilename());
+                var expectedDataSet = new DataSet();
+                expectedDataSet.ReadXmlSchema(ReadOnlyStreamFromFilename(GetXmlSchemaFilename()));
+                MergeDataSet(expectedDataSet, originalDataSet, refreshDataSet);
 
                 Assert.That(actualDataSet.HasTheSameDataAs(expectedDataSet));
             }
@@ -141,6 +148,28 @@ namespace NDbUnit.Test
             }
 
             return dataSet;
+        }
+
+        private void MergeDataSet(DataSet expectedDataSet, DataSet originalDataSet, DataSet refreshDataSet)
+        {
+            foreach (var expectedTable in expectedDataSet.Tables.Cast<DataTable>())
+            {
+                var originalTable = originalDataSet.Tables[expectedTable.TableName];
+                var refreshTable = refreshDataSet.Tables[expectedTable.TableName];
+                MergeTable(expectedTable, originalTable, refreshTable);
+            }
+        }
+
+        private void MergeTable(DataTable expectedTable, DataTable originalTable, DataTable refreshTable)
+        {
+            foreach (var row in refreshTable.Rows.Cast<DataRow>())
+                expectedTable.Rows.Add(row.ItemArray);
+            foreach (var row in originalTable.Rows.Cast<DataRow>())
+            {
+                var pkValues = originalTable.PrimaryKey.Select(x => row[x]).ToArray();
+                if (!expectedTable.Rows.Contains(pkValues))
+                    expectedTable.Rows.Add(row.ItemArray);
+            }
         }
     }
 }
