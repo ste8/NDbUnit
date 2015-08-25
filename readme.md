@@ -1,6 +1,6 @@
 #NDbUnit is a .NET library for managing database state during unit testing.#
 
-[![Build-Status](https://img.shields.io/teamcity/https/build.fubar-dev.com/s/NDbUnit_ReleaseBuild.svg?label=TeamCity)](https://build.fubar-dev.com/viewType.html?buildTypeId=NDbUnit_ReleaseBuild&guest=1)
+[![Build-Status](https://build.fubar-dev.de/guestAuth/app/rest/builds/buildType:%28id:NDbUnit_ReleaseBuild%29/statusIcon)](https://build.fubar-dev.com/viewType.html?buildTypeId=NDbUnit_ReleaseBuild&guest=1)
 
 NDbUnit may be used to increase repeat-ability in unit tests that
 interact with a database by ensuring that the database's state is
