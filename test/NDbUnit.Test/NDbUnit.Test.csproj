@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>9.0.30729</ProductVersion>
@@ -28,7 +28,7 @@
     </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
     <IsWebBootstrapper>true</IsWebBootstrapper>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <PublishUrl>http://localhost/NDbUnit.Test/</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
@@ -73,6 +73,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>..\..\build\Release\</OutputPath>
@@ -97,6 +98,7 @@
     <DebugType>none</DebugType>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>false</SignAssembly>
@@ -230,6 +232,56 @@
     <Compile Include="TestCategories.cs" />
     <Compile Include="XmlTestFiles.cs">
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Xml\DataSetComparer\DifferingDataSetWithDiffColumnNameToCompare.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DifferingDataSetWithDiffColumnNameToCompare.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="Xml\DataSetComparer\DifferingDataSetWithDiffColumnTypeToCompare.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DifferingDataSetWithDiffColumnTypeToCompare.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="Xml\DataSetComparer\DifferingDataSetWithDiffTablesToCompare.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DifferingDataSetWithDiffTablesToCompare.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="Xml\DataSetComparer\DifferingDataSetWithMissingFKToCompare.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DifferingDataSetWithMissingFKToCompare.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="Xml\DataSetComparer\FirstDataSetToCompare.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>FirstDataSetToCompare.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="Xml\OleDb\UserDS.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>UserDS.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="Xml\OracleClient\UserDS1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>UserDS.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="Xml\SQLite\UserDS.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>UserDS.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="Xml\SqlServer\SchemaWithSchemaPrefixes.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SchemaWithSchemaPrefixes.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="Xml\SqlServer\UserDS.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>UserDS.xsd</DependentUpon>
     </Compile>
     <None Include="app.config">
       <SubType>Designer</SubType>
