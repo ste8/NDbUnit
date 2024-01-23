@@ -18,14 +18,22 @@
  *
  */
 
+using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace NDbUnit.Core
 {
     public static class TableNameHelper
     {
+        private static readonly HashSet<string> _reservedForPostgres = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase);
+
         public static string FormatTableName(string declaredTableName, string quotePrefix, string quoteSuffix)
         {
+            if (IsPostgres(quotePrefix, quoteSuffix)) {
+                return EscapeTableNameForPostgres(declaredTableName);
+            }
+
             StringBuilder result = new StringBuilder();
 
             var tableNameElements = declaredTableName.Split(".".ToCharArray());
@@ -55,6 +63,65 @@ namespace NDbUnit.Core
             }
 
             return result.ToString();
+        }
+
+        private static bool IsPostgres(string quotePrefix, string quoteSuffix)
+        {
+            bool result = quotePrefix == "\"" && quoteSuffix == "\"";
+            return result;
+        }
+
+        public static string EscapeTableNameForPostgres(string name)
+        {
+            var resultName = Unescape(name);
+            if (ShouldEscapeForPostgres(resultName)) {
+                resultName = $"\"{resultName}\"";
+            }
+            return resultName;
+        }
+
+        public static string EscapeColumnNameForPostgres(string name)
+        {
+            var resultName = Unescape(name);
+            if (ShouldEscapeForPostgres(resultName)) {
+                resultName = $"\"{resultName}\"";
+            }
+            return resultName;
+        }
+
+        public static void SetReservedKeywordsForPostgres(IEnumerable<string> keywords)
+        {
+            _reservedForPostgres.Clear();
+            foreach (var keyword in keywords) {
+                _reservedForPostgres.Add(keyword);
+            }
+        }
+
+        private static bool ShouldEscapeForPostgres(string tableName)
+        {
+            return _reservedForPostgres.Contains(tableName);
+        }
+
+        public static string Unescape(string name)
+        {
+            if (!IsEscaped(name)) return name;
+            name = name.Substring(1, name.Length - 2);
+            return name;
+        }
+
+        private static bool IsEscaped(string name)
+        {
+            bool isEscaped = (name.StartsWith("[") && name.EndsWith("]"))
+                || (name.StartsWith("\"") && name.EndsWith("\""));
+            return isEscaped;
+        }
+
+        public static string EscapeColumnName(string columnName, string quotePrefix, string quoteSuffix)
+        {
+            if (IsPostgres(quotePrefix, quoteSuffix)) {
+                return EscapeColumnNameForPostgres(columnName);
+            }
+            return $"{quotePrefix}{columnName}{quoteSuffix}";
         }
     }
 }

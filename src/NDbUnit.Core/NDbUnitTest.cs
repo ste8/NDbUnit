@@ -23,6 +23,7 @@ using System.Data.Common;
 using System.IO;
 using System.Data;
 using System.Collections.Specialized;
+using System.Xml;
 
 namespace NDbUnit.Core
 {
@@ -278,6 +279,11 @@ namespace NDbUnit.Core
             }
         }
 
+        public void ReadXml(XmlReader xml)
+        {
+            DoReadXml(xml, false);
+        }
+
         public void ReadXml(Stream xml)
         {
             DoReadXml(xml, false);
@@ -403,6 +409,20 @@ namespace NDbUnit.Core
                 const string message = "INDbUnitTest.ReadXmlSchema(string) or INDbUnitTest.ReadXmlSchema(Stream) must be called successfully";
                 throw new NDbUnitException(message);
             }
+        }
+
+        
+        private void DoReadXml(XmlReader reader, bool appendData)
+        {
+            if (_dataSet == null)
+            {
+                throw new InvalidOperationException("You must first call ReadXmlSchema before reading in xml data.");
+            }
+
+            if (!appendData)
+                _dataSet.Clear();
+
+            _dataSet.ReadXml(reader);
         }
 
         private void DoReadXml(Stream xml, bool appendData)

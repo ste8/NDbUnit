@@ -23,6 +23,7 @@ using System.Collections.Specialized;
 using System.Data;
 using System.Data.Common;
 using System.IO;
+using System.Xml;
 
 namespace NDbUnit.Core
 {
@@ -84,6 +85,8 @@ namespace NDbUnit.Core
         /// <param name="xmlFile">The xml file.</param>
         /// <exception cref="ArgumentException" />
         void ReadXml(string xmlFile);
+
+        void ReadXml(XmlReader xmlReader);
 
         /// <summary>
         /// Read in an xml stream whose data should be conform to the schema 

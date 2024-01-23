@@ -109,10 +109,8 @@ namespace NDbUnit.Postgresql
                             DbCommand selectMaxCommand =
                                 CreateDbCommand(
                                     string.Format(
-                                        "SELECT MAX({0}{2}{1}) FROM {3}",
-                                        QuotePrefix,
-                                        QuoteSuffix,
-                                        column.ColumnName,
+                                        "SELECT MAX({0}) FROM {1}",
+                                        TableNameHelper.EscapeColumnName(column.ColumnName, QuotePrefix, QuoteSuffix),
                                         TableNameHelper.FormatTableName(dataTable.TableName, QuotePrefix, QuoteSuffix))))
                         {
                             selectMaxCommand.Connection = sqlTransaction.Connection;
@@ -145,9 +143,11 @@ namespace NDbUnit.Postgresql
 
         private void enableDisableTableConstraints(bool enableConstraint, string tableName, DbTransaction dbTransaction)
         {
+            string escapedTableName = TableNameHelper.EscapeTableNameForPostgres(tableName);
+
             var queryEnables =
-                string.Format("ALTER TABLE \"{0}\" {1} TRIGGER ALL",
-                              tableName,
+                string.Format("ALTER TABLE {0} {1} TRIGGER ALL",
+                              escapedTableName,
                               enableConstraint ? "ENABLE" : "DISABLE");
             using (var dbCommand = new NpgsqlCommand
             {

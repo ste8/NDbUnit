@@ -340,7 +340,8 @@ namespace NDbUnit.Core
 
                     notFirstColumn = true;
 
-                    sb.Append(QuotePrefix + dataRow["ColumnName"] + QuoteSuffix);
+                    var escapedColumnName = TableNameHelper.EscapeColumnName((string)dataRow["ColumnName"], QuotePrefix, QuoteSuffix);
+                    sb.Append(escapedColumnName);
                     sbParam.Append(GetParameterDesignator(count));
 
                     sqlParameter = CreateNewSqlParameter(count, dataRow);
@@ -375,7 +376,8 @@ namespace NDbUnit.Core
 
                 notFirstColumn = true;
 
-                sb.Append(QuotePrefix + dataColumn.ColumnName + QuoteSuffix);
+                var escapedColumnName = TableNameHelper.EscapeColumnName(dataColumn.ColumnName, QuotePrefix, QuoteSuffix);
+                sb.Append(escapedColumnName);
             }
 
             sb.Append(" FROM ");
