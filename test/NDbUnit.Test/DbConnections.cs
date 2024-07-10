@@ -79,6 +79,14 @@ namespace NDbUnit.Test
             }
         }
 
+        public static string SqliteMsDataConnectionString
+        {
+            get
+            {
+                return ConfigurationManager.ConnectionStrings["SqliteMsDataConnectionString"].ConnectionString;
+            }
+        }
+
         public static string SqlLiteInMemConnectionString
         {
             get
