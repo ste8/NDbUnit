@@ -237,6 +237,7 @@ namespace NDbUnit.Core.SqliteMicrosoftData
             sb.Append(" FROM ");
             sb.Append(TableNameHelper.FormatTableName(tableName, QuotePrefix, QuoteSuffix));
 
+            sqlSelectCommand.Transaction = (SqliteTransaction)transaction;
             sqlSelectCommand.CommandText = sb.ToString();
             sqlSelectCommand.Connection = (SqliteConnection)ConnectionManager.GetConnection();
 

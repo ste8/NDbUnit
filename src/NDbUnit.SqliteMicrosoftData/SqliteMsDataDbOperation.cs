@@ -22,6 +22,7 @@ using System;
 using System.Data;
 using System.Data.Common;
 using Microsoft.Data.Sqlite;
+using NDbUnit.SqliteMicrosoftData;
 
 namespace NDbUnit.Core.SqliteMicrosoftData
 {
@@ -29,8 +30,7 @@ namespace NDbUnit.Core.SqliteMicrosoftData
     {
         protected override DbDataAdapter CreateDbDataAdapter()
         {
-            throw new NotImplementedException();
-            //return new SqliteDataAdapter();
+            return new CustomSqliteDataAdapter();
         }
 
         protected override DbCommand CreateDbCommand(string cmdText)
