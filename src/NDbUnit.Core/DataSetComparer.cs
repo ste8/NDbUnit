@@ -8,6 +8,7 @@ using System.Text;
 using System.Xml.XPath;
 using KellermanSoftware.CompareNetObjects;
 using KellermanSoftware.CompareNetObjects.TypeComparers;
+using NDbUnit.Core.CompareNETObjectsExtensions;
 
 namespace NDbUnit.Core
 {
@@ -66,7 +67,7 @@ namespace NDbUnit.Core
         /// <returns></returns>
         public override bool IsTypeMatch(Type type1, Type type2)
         {
-            return TypeHelper.IsDataset(type1) && TypeHelper.IsDataset(type2);
+            return TypeHelperExtension.IsDataset(type1) && TypeHelperExtension.IsDataset(type2);
         }
 
         /// <summary>
@@ -155,7 +156,7 @@ namespace NDbUnit.Core
         /// <returns></returns>
         public override bool IsTypeMatch(Type type1, Type type2)
         {
-            return TypeHelper.IsDataTable(type1) && TypeHelper.IsDataTable(type2);
+            return TypeHelperExtension.IsDataTable(type1) && TypeHelperExtension.IsDataTable(type2);
         }
 
         /// <summary>
